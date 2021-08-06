@@ -3,7 +3,7 @@
 Route::group([
     'prefix' => 'payments/callbacks',
     'middleware' => 'pesa.cors',
-    'namespace' => 'Samerior\MobileMoney\Mpesa\Http\Controllers'
+    'namespace' => 'DrH\Mpesa\Http\Controllers'
 ], function () {
     Route::any('validate', 'MpesaController@validatePayment');
     Route::any('confirmation', 'MpesaController@confirmation');
