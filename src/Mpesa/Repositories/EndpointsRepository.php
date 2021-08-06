@@ -46,7 +46,7 @@ class EndpointsRepository
     private static function getUrl($suffix, MpesaAccount $account = null): string
     {
         $baseEndpoint = 'https://api.safaricom.co.ke/';
-        if (\config('drh.mpesa.sandbox') || $account->sandbox) {
+        if (\config('drh.mpesa.sandbox') || ($account && $account->sandbox)) {
             $baseEndpoint = 'https://sandbox.safaricom.co.ke/';
         }
         return $baseEndpoint . $suffix;
