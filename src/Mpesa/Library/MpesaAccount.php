@@ -12,6 +12,6 @@ class MpesaAccount
         public ?string $shortcode = null,
         public ?string $key = null,
         public ?string $secret = null,
-
+        public ?string $passkey = null,
     ) {}
 }

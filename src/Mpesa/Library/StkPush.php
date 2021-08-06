@@ -7,6 +7,7 @@ use DrH\Mpesa\Database\Entities\MpesaStkRequest;
 use DrH\Mpesa\Events\StkPushRequestedEvent;
 use DrH\Mpesa\Exceptions\MpesaException;
 use DrH\Mpesa\Repositories\Generator;
+use GuzzleHttp\Exception\GuzzleException;
 use GuzzleHttp\Exception\RequestException;
 use Illuminate\Support\Facades\Auth;
 
@@ -85,9 +86,10 @@ class StkPush extends ApiCore
      * @param null|string $number
      * @param null|string $reference
      * @param null|string $description
+     * @param MpesaAccount|null $account
      * @return mixed
-     * @throws \DrH\Mpesa\Exceptions\MpesaException
-     * @throws \GuzzleHttp\Exception\GuzzleException
+     * @throws MpesaException
+     * @throws GuzzleException
      * @throws \Exception
      */
     public function push($amount = null, $number = null, $reference = null, $description = null, MpesaAccount $account = null)
@@ -95,7 +97,7 @@ class StkPush extends ApiCore
         $time = Carbon::now()->format('YmdHis');
 
         if (\config('drh.mpesa.multi_tenancy', false)) {
-            if ($account == null) {
+            if ($account == null || $account->passkey == null || $account->shortcode == null) {
                 throw new MpesaException("Multi Tenancy is enabled but Mpesa Account is null.");
             }
 
@@ -167,7 +169,7 @@ class StkPush extends ApiCore
      * @return mixed
      * @throws MpesaException
      * @throws \Exception
-     * @throws \GuzzleHttp\Exception\GuzzleException
+     * @throws GuzzleException
      */
     public function validate($checkoutRequestID)
     {

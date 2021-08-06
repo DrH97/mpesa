@@ -4,6 +4,7 @@ use DrH\Mpesa\Exceptions\MpesaException;
 use DrH\Mpesa\Facades\B2C;
 use DrH\Mpesa\Facades\Identity;
 use DrH\Mpesa\Facades\STK;
+use DrH\Mpesa\Library\MpesaAccount;
 use DrH\Mpesa\Library\Simulate;
 use GuzzleHttp\Exception\GuzzleException;
 
@@ -54,11 +55,12 @@ if (!function_exists('mpesa_request')) {
      * @param int $amount
      * @param string|null $reference
      * @param string|null $description
+     * @param MpesaAccount|null $account
      * @return mixed
      */
-    function mpesa_request($phone, $amount, $reference = null, $description = null)
+    function mpesa_request($phone, $amount, $reference = null, $description = null, MpesaAccount $account = null)
     {
-        return STK::push($amount, $phone, $reference, $description);
+        return STK::push($amount, $phone, $reference, $description, $account);
     }
 }
 if (!function_exists('mpesa_validate')) {
