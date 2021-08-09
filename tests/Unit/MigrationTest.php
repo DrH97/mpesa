@@ -14,8 +14,8 @@ class MigrationTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->loadLaravelMigrations(['--database' => 'testing']);
-        $this->artisan('migrate', ['--database' => 'testing']);
+        $this->loadLaravelMigrations(['--database' => 'testbench']);
+        $this->artisan('migrate', ['--database' => 'testbench'])->run();
         Model::unguard();
     }
 

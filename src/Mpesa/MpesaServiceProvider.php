@@ -44,7 +44,7 @@ class MpesaServiceProvider extends ServiceProvider
         });
         $this->commands(
             [
-//                Registra::class,
+            //                Registra::class,
                 StkStatus::class,
             ]
         );
@@ -63,7 +63,6 @@ class MpesaServiceProvider extends ServiceProvider
         $this->app['router']->aliasMiddleware('pesa.cors', MpesaCors::class);
 
         $this->requireHelperScripts();
-
     }
 
     /**

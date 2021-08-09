@@ -10,7 +10,7 @@ return [
      | Production base url: https://api.safaricom.co.ke
      |
      */
-    'sandbox' => true,
+    'sandbox' => env('MPESA_SANDBOX', true),
     /*
      |------------------------------------------------------
      | Set multi tenancy mode
@@ -18,7 +18,7 @@ return [
      | Specify whether to use library with multi tenancy support (i.e. support multiple paybills)
      |
      */
-    'multi_tenancy' => true,
+    'multi_tenancy' => false,
     /*
    |--------------------------------------------------------------------------
    | Cache credentials
@@ -42,11 +42,11 @@ return [
         /*
          * Consumer Key from developer portal
          */
-        'consumer_key' => 'Ei4lr5xbDZXS9XEAZ1BhNE4xCBcAYGVy',
+        'consumer_key' => env('MPESA_KEY', 'uIeJwZwAWTbrNxQ8GypnDWSPtKXRbGql'),
         /*
          * Consumer secret from developer portal
          */
-        'consumer_secret' => 'eMhCDmzFQyx1SNSZ',
+        'consumer_secret' => env('MPESA_SECRET', '6084w7ANkYErHipt'),
         /*
          * HTTP callback method [POST,GET]
          */
@@ -54,11 +54,11 @@ return [
         /*
          * Your receiving paybill or till umber
          */
-        'short_code' => 600152,
+        'short_code' => env('MPESA_STK_SHORTCODE', '174379'),
         /*
          * Passkey , requested from mpesa
          */
-        'passkey' => 'bfb279f9aa9bdbcf158e97dd71a467cd2e0c893059b10f78e6b72ada1ed2c919',
+        'passkey' => env('MPESA_STK_PASS_KEY', 'bfb279f9aa9bdbcf158e97dd71a467cd2e0c893059b10f78e6b72ada1ed2c919'),
         /*
          * --------------------------------------------------------------------------------------
          * Callbacks:
@@ -93,30 +93,30 @@ return [
         /*
          * Sending app consumer key
          */
-        'consumer_key' => 'Ei4lr5xbDZXS9XEAZ1BhNE4xCBcAYGVyA',
+        'consumer_key' => env('MPESA_B2C_KEY'),
         /*
          * Sending app consumer secret
          */
-        'consumer_secret' => 'eMhCDmzFQyx1SNSZ',
+        'consumer_secret' => env('MPESA_B2C_SECRET'),
         /*
          * Shortcode sending funds
          */
-        'short_code' => 600000,
+        'short_code' => env('MPESA_B2C_SHORTCODE', '603021'),
         /*
         * This is the user initiating the transaction, usually from the Mpesa organization portal
         * Make sure this was the user who was used to 'GO LIVE'
         * https://org.ke.m-pesa.com/
         */
-        'initiator' => 'testapi',
+        'initiator' => env('MPESA_B2C_INITIATOR', 'apiop37'),
         /*
          * The user security credential.
          * Go to https://developer.safaricom.co.ke/test_credentials and paste your initiator password to generate
          * security credential
          */
         'security_credential' => 'GXiVXirQFaJvEFOQyn+VJ4Gp3Ccvpoq6aqzFiNgvH18UMU59Qxc+UTAX7Blzo6L0+tQG2wUJ1fKH4YlPagtzDHT37796uu0NysS85uPjxZMjnbGhPNeHnhJLzwyrjppl8mZpnmVg4CaVrEdcriuyifKIiF1hmc0A/RnjBMzY6yevbIV0kAgrn5cDvCN99O1rr1nl69GaVbP7a/6AWnRkVUldnalQmqQhfgLbOdxjGOVGU2arqjuvgQ6glo1uK9PUnp3UH2Vv66Lu99JglWyjlcWufZhJXUmFFB9tfoKAX2URnPGi4PvvJ6OgJNdsJmTsevnG2c/KKOa45rzdvwrwKA==',
-       /*
-        * Notification URL for timeout
-        */
+        /*
+         * Notification URL for timeout
+         */
         'timeout_url' => env('APP_URL') . '/payments/callbacks/timeout/',
         /**
          * Result URL

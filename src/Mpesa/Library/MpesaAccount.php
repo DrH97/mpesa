@@ -28,5 +28,6 @@ class MpesaAccount
         public string $passkey,
         public bool $sandbox = false,
         public string $type = 'PAYBILL',
-    ) {}
+    ) {
+    }
 }

@@ -7,6 +7,8 @@ use DrH\Mpesa\Facades\Identity;
 use DrH\Mpesa\Facades\Registrar;
 use DrH\Mpesa\Facades\STK;
 use DrH\Mpesa\MpesaServiceProvider;
+use Illuminate\Foundation\Application;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 
 /**
  * Class TestCase
@@ -14,8 +16,10 @@ use DrH\Mpesa\MpesaServiceProvider;
  */
 class TestCase extends \Orchestra\Testbench\TestCase
 {
+    use RefreshDatabase;
+
     /**
-     * @param \Illuminate\Foundation\Application $app
+     * @param Application $app
      * @return array
      */
     protected function getPackageProviders($app)
