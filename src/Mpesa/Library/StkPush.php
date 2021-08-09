@@ -96,7 +96,7 @@ class StkPush extends ApiCore
     {
         $time = Carbon::now()->format('YmdHis');
 
-        if (\config('drh.mpesa.multi_tenancy', false)) {
+        if (\config('drh.mpesa.multi_tenancy', false) && !$account->sandbox) {
             if ($account == null || $account->passkey == null || $account->shortcode == null) {
                 throw new MpesaException("Multi Tenancy is enabled but Mpesa Account is null.");
             }
