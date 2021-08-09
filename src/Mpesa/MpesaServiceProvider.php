@@ -15,14 +15,14 @@ use DrH\Mpesa\Library\Core;
 use DrH\Mpesa\Library\IdCheck;
 use DrH\Mpesa\Library\RegisterUrl;
 use DrH\Mpesa\Library\StkPush;
+use DrH\Mpesa\Listeners\B2cFailedListener;
+use DrH\Mpesa\Listeners\B2cSuccessListener;
 use DrH\Mpesa\Listeners\C2bPaymentConfirmation;
 use DrH\Mpesa\Listeners\StkPaymentFailed;
 use DrH\Mpesa\Listeners\StkPaymentSuccessful;
 use GuzzleHttp\Client;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\ServiceProvider;
-use DrH\Mpesa\Listeners\B2cFailedListener;
-use DrH\Mpesa\Listeners\B2cSuccessListener;
 
 /**
  * Class MpesaServiceProvider
@@ -111,7 +111,7 @@ class MpesaServiceProvider extends ServiceProvider
 
     private function requireHelperScripts()
     {
-        $files = glob(__DIR__ . '/Support/*.php');
+        $files = glob(__DIR__ . '/../Support/*.php');
         foreach ($files as $file) {
             include_once $file;
         }
