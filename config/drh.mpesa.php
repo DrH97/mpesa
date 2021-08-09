@@ -54,11 +54,11 @@ return [
         /*
          * Your receiving paybill or till umber
          */
-        'short_code' => env('MPESA_STK_SHORTCODE', '174379'),
+        'short_code' => env('MPESA_C2B_SHORTCODE', '174379'),
         /*
          * Passkey , requested from mpesa
          */
-        'passkey' => env('MPESA_STK_PASS_KEY', 'bfb279f9aa9bdbcf158e97dd71a467cd2e0c893059b10f78e6b72ada1ed2c919'),
+        'passkey' => env('MPESA_C2B_PASS_KEY', 'bfb279f9aa9bdbcf158e97dd71a467cd2e0c893059b10f78e6b72ada1ed2c919'),
         /*
          * --------------------------------------------------------------------------------------
          * Callbacks:
