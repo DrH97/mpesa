@@ -2,11 +2,11 @@
 
 namespace DrH\Mpesa\Library;
 
-use Illuminate\Support\Str;
 use DrH\Mpesa\Exceptions\MpesaException;
 use DrH\Mpesa\Repositories\EndpointsRepository;
 use DrH\Mpesa\Repositories\Mpesa;
 use GuzzleHttp\Exception\ClientException;
+use Illuminate\Support\Str;
 
 /**
  * Class ApiCore
@@ -79,7 +79,7 @@ class ApiCore
     private function makeRequest($body, $endpoint, MpesaAccount $account = null)
     {
         if (\config('drh.mpesa.multi_tenancy', false)) {
-            $this->engine->auth->authenticate($this->bulk, $account);
+            $this->bearer = $this->engine->auth->authenticate($this->bulk, $account);
         } else {
             $this->bearer = $this->engine->auth->authenticate($this->bulk);
         }
