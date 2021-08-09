@@ -107,7 +107,7 @@ class Authenticator
      */
     private function generateCredentials(MpesaAccount $account = null): self
     {
-        if (config('drh.mpesa.multi_tenancy', false) && !$account->sandbox) {
+        if (config('drh.mpesa.multi_tenancy', false) && ($account && !$account->sandbox)) {
             if ($account->key == null || $account->secret == null) {
                 throw $this->generateException("Multi Tenancy is enabled but key or secret is null.");
             }
