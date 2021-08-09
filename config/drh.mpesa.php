@@ -18,7 +18,7 @@ return [
      | Specify whether to use library with multi tenancy support (i.e. support multiple paybills)
      |
      */
-    'multi_tenancy' => false,
+    'multi_tenancy' => env('MPESA_MULTI_TENANCY', false),
     /*
    |--------------------------------------------------------------------------
    | Cache credentials

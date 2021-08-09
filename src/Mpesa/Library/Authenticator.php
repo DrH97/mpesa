@@ -3,10 +3,15 @@
 namespace DrH\Mpesa\Library;
 
 use DrH\Mpesa\Exceptions\MpesaException;
+use DrH\Mpesa\Repositories\EndpointsRepository;
+use GuzzleHttp\Exception\GuzzleException;
 use GuzzleHttp\Exception\RequestException;
 use Illuminate\Support\Facades\Cache;
 use Psr\Http\Message\ResponseInterface;
-use DrH\Mpesa\Repositories\EndpointsRepository;
+use function base64_encode;
+use function config;
+use function json_decode;
+use function strtolower;
 
 /**
  * Class Authenticator
@@ -54,7 +59,7 @@ class Authenticator
      * @param bool $bulk
      * @return string
      * @throws MpesaException
-     * @throws \GuzzleHttp\Exception\GuzzleException
+     * @throws GuzzleException
      */
     public function authenticate($bulk = false, MpesaAccount $account = null): ?string
     {
@@ -68,7 +73,7 @@ class Authenticator
         try {
             $response = $this->makeRequest();
             if ($response->getStatusCode() === 200) {
-                $body = \json_decode($response->getBody());
+                $body = json_decode($response->getBody());
                 $this->saveCredentials($body);
                 return $body->access_token;
             }
@@ -88,7 +93,7 @@ class Authenticator
      */
     private function generateException($reason): ?MpesaException
     {
-        switch (\strtolower($reason)) {
+        switch (strtolower($reason)) {
             case 'bad request: invalid credentials':
                 return new MpesaException('Invalid consumer key and secret combination');
             default:
@@ -102,7 +107,7 @@ class Authenticator
      */
     private function generateCredentials(MpesaAccount $account = null): self
     {
-        if (\config('drh.mpesa.multi_tenancy', false)) {
+        if (config('drh.mpesa.multi_tenancy', false) && !$account->sandbox) {
             if ($account->key == null || $account->secret == null) {
                 throw $this->generateException("Multi Tenancy is enabled but key or secret is null.");
             }
@@ -110,22 +115,22 @@ class Authenticator
             $key = $account->key;
             $secret = $account->secret;
         } else {
-            $key = \config('drh.mpesa.c2b.consumer_key');
-            $secret = \config('drh.mpesa.c2b.consumer_secret');
+            $key = config('drh.mpesa.c2b.consumer_key');
+            $secret = config('drh.mpesa.c2b.consumer_secret');
             if ($this->alt) {
                 //lazy way to switch to a different app in case of bulk
-                $key = \config('drh.mpesa.b2c.consumer_key');
-                $secret = \config('drh.mpesa.b2c.consumer_secret');
+                $key = config('drh.mpesa.b2c.consumer_key');
+                $secret = config('drh.mpesa.b2c.consumer_secret');
             }
         }
 
-        $this->credentials = \base64_encode($key . ':' . $secret);
+        $this->credentials = base64_encode($key . ':' . $secret);
         return $this;
     }
 
     /**
      * @return ResponseInterface
-     * @throws \GuzzleHttp\Exception\GuzzleException
+     * @throws GuzzleException
      */
     private function makeRequest(): ResponseInterface
     {
