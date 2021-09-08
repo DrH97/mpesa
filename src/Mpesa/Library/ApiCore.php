@@ -62,6 +62,8 @@ class ApiCore
         };
         $replace('2547', '+2547');
         $replace('07', '+2547');
+        $replace('2541', '+2541');
+        $replace('01', '+2541');
         if ($strip_plus) {
             $replace('+254', '254');
         }
