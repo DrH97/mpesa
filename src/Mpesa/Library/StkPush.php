@@ -103,9 +103,14 @@ class StkPush extends ApiCore
 
             $shortCode = $account->shortcode;
             $passkey = $account->passkey;
+
+            $transactionType = $account->type == "TILL" ? "CustomerBuyGoodsOnline" : "CustomerPayBillOnline";
+
         } else {
             $shortCode = \config('drh.mpesa.c2b.short_code');
             $passkey = \config('drh.mpesa.c2b.passkey');
+
+            $transactionType = config('drh.mpesa.c2b.transaction_type');
         }
 
         $callback = \config('drh.mpesa.c2b.stk_callback');
@@ -116,7 +121,7 @@ class StkPush extends ApiCore
             'BusinessShortCode' => $shortCode,
             'Password' => $password,
             'Timestamp' => $time,
-            'TransactionType' => 'CustomerPayBillOnline',
+            'TransactionType' => $transactionType,
             'Amount' => $amount ?: $this->amount,
             'PartyA' => $good_phone,
             'PartyB' => $shortCode,

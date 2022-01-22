@@ -52,9 +52,13 @@ return [
          */
         'callback_method' => 'POST',
         /*
-         * Your receiving paybill or till umber
+         * Your receiving paybill or till number
          */
         'short_code' => env('MPESA_C2B_SHORTCODE', '174379'),
+        /*
+         * Transaction type based on shortcode business type
+         */
+        'transaction_type' => env('MPESA_C2B_TRANSACTION_TYPE', 'CustomerPayBillOnline'),
         /*
          * Passkey , requested from mpesa
          */
