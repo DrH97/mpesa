@@ -115,6 +115,8 @@ class StkPush extends ApiCore
 
         $callback = \config('drh.mpesa.c2b.stk_callback');
 
+        $partyB = \config('drh.mpesa.c2b.party_b');
+
         $password = \base64_encode($shortCode . $passkey . $time);
         $good_phone = $this->formatPhoneNumber($number ?: $this->number);
         $body = [
@@ -124,7 +126,7 @@ class StkPush extends ApiCore
             'TransactionType' => $transactionType,
             'Amount' => $amount ?: $this->amount,
             'PartyA' => $good_phone,
-            'PartyB' => $shortCode,
+            'PartyB' => $partyB ?? $shortCode,
             'PhoneNumber' => $good_phone,
             'CallBackURL' => $callback,
             'AccountReference' => $reference ?? $this->reference ?? $good_phone,

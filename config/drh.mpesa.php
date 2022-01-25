@@ -60,6 +60,10 @@ return [
          */
         'transaction_type' => env('MPESA_C2B_TRANSACTION_TYPE', 'CustomerPayBillOnline'),
         /*
+         * Optional Till number if different from shortcode
+         */
+        'party_b' => env('MPESA_C2B_PARTY_B'),
+        /*
          * Passkey , requested from mpesa
          */
         'passkey' => env('MPESA_C2B_PASS_KEY', 'bfb279f9aa9bdbcf158e97dd71a467cd2e0c893059b10f78e6b72ada1ed2c919'),
