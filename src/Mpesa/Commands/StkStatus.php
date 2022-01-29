@@ -2,13 +2,10 @@
 
 namespace DrH\Mpesa\Commands;
 
-use DrH\Mpesa\Repositories\Mpesa;
+use DrH\Mpesa\Repositories\MpesaRepository;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Log;
 
-/**
- * Class StkStatus
- * @package DrH\Mpesa\Commands
- */
 class StkStatus extends Command
 {
     /**
@@ -24,20 +21,15 @@ class StkStatus extends Command
      * @var string
      */
     protected $description = 'Check status of all pending transactions';
-    /**
-     * @var Mpesa
-     */
-    private $mpesa;
 
     /**
      * Create a new command instance.
      *
-     * @param Mpesa $registerUrl
+     * @param MpesaRepository $repository
      */
-    public function __construct(Mpesa $registerUrl)
+    public function __construct(private MpesaRepository $repository)
     {
         parent::__construct();
-        $this->mpesa = $registerUrl;
     }
 
     /**
@@ -46,8 +38,10 @@ class StkStatus extends Command
      */
     public function handle()
     {
-        $results = $this->mpesa->queryStkStatus();
-//        TODO: Handle this in a better/smoother manner
-        dd($results);
+        $results = $this->repository->queryStkStatus();
+
+        /** @var array $results */
+        Log::info($results['successful']);
+        Log::error($results['errors']);
     }
 }

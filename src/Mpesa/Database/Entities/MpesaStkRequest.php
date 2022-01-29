@@ -4,6 +4,7 @@ namespace DrH\Mpesa\Database\Entities;
 
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 /**
  * DrH\Mpesa\Database\Entities\MpesaStkRequest
@@ -14,12 +15,11 @@ use Illuminate\Database\Eloquent\Model;
  * @property string $reference
  * @property string $description
  * @property string $status
- * @property int $complete
- * @property string $MerchantRequestID
- * @property string $CheckoutRequestID
- * @property int|null $user_id
- * @property Carbon|null $created_at
- * @property Carbon|null $updated_at
+ * @property string $merchant_request_id
+ * @property string $checkout_request_id
+ * @property int|null $relation_id
+ * @property Carbon $created_at
+ * @property Carbon $updated_at
  * @property-read MpesaStkCallback $response
  * @mixin \Eloquent
  */
@@ -27,8 +27,8 @@ class MpesaStkRequest extends Model
 {
     protected $guarded = [];
 
-    public function response()
+    public function response(): HasOne
     {
-        return $this->hasOne(MpesaStkCallback::class, 'CheckoutRequestID', 'CheckoutRequestID');
+        return $this->hasOne(MpesaStkCallback::class, 'checkout_request_id', 'checkout_request_id');
     }
 }

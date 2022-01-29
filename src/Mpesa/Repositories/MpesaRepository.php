@@ -2,7 +2,6 @@
 
 namespace DrH\Mpesa\Repositories;
 
-use Illuminate\Support\Arr;
 use DrH\Mpesa\Database\Entities\MpesaBulkPaymentRequest;
 use DrH\Mpesa\Database\Entities\MpesaBulkPaymentResponse;
 use DrH\Mpesa\Database\Entities\MpesaC2bCallback;
@@ -13,17 +12,21 @@ use DrH\Mpesa\Events\B2cPaymentSuccessEvent;
 use DrH\Mpesa\Events\C2bConfirmationEvent;
 use DrH\Mpesa\Events\StkPushPaymentFailedEvent;
 use DrH\Mpesa\Events\StkPushPaymentSuccessEvent;
+use Exception;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Auth;
+use JetBrains\PhpStorm\ArrayShape;
 
 /**
  * Class Mpesa
  * @package DrH\Repositories
  */
-class Mpesa
+class MpesaRepository
 {
     /**
      * @param string $json
-     * @return $this|array|\Illuminate\Database\Eloquent\Model
+     * @return $this|array|Model
      */
     public function processStkPushCallback($json)
     {
@@ -51,7 +54,7 @@ class Mpesa
     /**
      * @param $response
      * @param array $body
-     * @return MpesaBulkPaymentRequest|\Illuminate\Database\Eloquent\Model
+     * @return MpesaBulkPaymentRequest|Model
      */
     public function saveB2cRequest($response, $body = [])
     {
@@ -68,9 +71,9 @@ class Mpesa
 
     /**
      * @param string $json
-     * @return $this|\Illuminate\Database\Eloquent\Model
+     * @return MpesaC2bCallback
      */
-    public function processConfirmation($json)
+    public function processConfirmation($json): MpesaC2bCallback
     {
         $data = json_decode($json, true);
         $callback = MpesaC2bCallback::create($data);
@@ -79,9 +82,9 @@ class Mpesa
     }
 
     /**
-     * @return MpesaBulkPaymentResponse|\Illuminate\Database\Eloquent\Model
+     * @return MpesaBulkPaymentResponse
      */
-    private function handleB2cResult()
+    private function handleB2cResult(): MpesaBulkPaymentResponse
     {
         $data = request('Result');
 
@@ -110,11 +113,11 @@ class Mpesa
         return $response;
     }
 
-    private function saveResultParams(array $params, MpesaBulkPaymentResponse $response): \Illuminate\Database\Eloquent\Model
+    private function saveResultParams(array $params, MpesaBulkPaymentResponse $response): Model
     {
         $params_payload = $params['ResultParameter'];
         $new_params = Arr::pluck($params_payload, 'Value', 'Key');
-        return $response->data()->create($new_params);
+        return $response->resultParams()->create($new_params);
     }
 
     /**
@@ -132,6 +135,7 @@ class Mpesa
     /**
      * @return array
      */
+    #[ArrayShape(shape: ['successful' => "array", 'errors' => "array"])]
     public function queryStkStatus(): array
     {
         /** @var MpesaStkRequest[] $stk */
@@ -154,7 +158,7 @@ class Mpesa
                 $errors[$item->CheckoutRequestID] = $status->ResultDesc;
                 $callback = MpesaStkCallback::create($attributes);
                 $this->fireStkEvent($callback, get_object_vars($status));
-            } catch (\Exception $e) {
+            } catch (Exception $e) {
                 $errors[$item->CheckoutRequestID] = $e->getMessage();
             }
         }
@@ -164,15 +168,14 @@ class Mpesa
     /**
      * @param MpesaStkCallback $stkCallback
      * @param array $response
-     * @return MpesaStkCallback
+     * @return void
      */
-    private function fireStkEvent(MpesaStkCallback $stkCallback, $response): MpesaStkCallback
+    private function fireStkEvent(MpesaStkCallback $stkCallback, array $response): void
     {
         if ($stkCallback->ResultCode == 0) {
             event(new StkPushPaymentSuccessEvent($stkCallback, $response));
         } else {
             event(new StkPushPaymentFailedEvent($stkCallback, $response));
         }
-        return $stkCallback;
     }
 }

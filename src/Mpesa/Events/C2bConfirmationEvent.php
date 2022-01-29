@@ -7,30 +7,16 @@ use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
-/**
- * Class C2BConfirmationEvent
- * @package DrH\Mpesa\Events
- */
 class C2bConfirmationEvent
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
-    /**
-     * @var MpesaC2bCallback
-     */
-    public $transaction;
-    /**
-     * @var array
-     */
-    public $mpesa_response;
 
     /**
      * C2BConfirmationEvent constructor.
      * @param MpesaC2bCallback $c2bCallback
-     * @param array $response
+     * @param array $apiJsonData
      */
-    public function __construct(MpesaC2bCallback $c2bCallback, array $response = [])
+    public function __construct(public MpesaC2bCallback $c2bCallback, public array $apiJsonData = [])
     {
-        $this->transaction = $c2bCallback;
-        $this->mpesa_response = $response;
     }
 }

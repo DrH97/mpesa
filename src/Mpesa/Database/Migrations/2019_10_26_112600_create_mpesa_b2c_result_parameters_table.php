@@ -16,14 +16,14 @@ class CreateMpesaB2cResultParametersTable extends Migration
         Schema::create('mpesa_b2c_result_parameters', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->unsignedBigInteger('response_id');
-            $table->decimal('TransactionAmount', 10, 2);
-            $table->string('TransactionReceipt')->unique();
-            $table->char('B2CRecipientIsRegisteredCustomer', 1);
-            $table->bigInteger('B2CChargesPaidAccountAvailableFunds');
-            $table->string('ReceiverPartyPublicName');
-            $table->dateTime('TransactionCompletedDateTime');
-            $table->decimal('B2CUtilityAccountAvailableFunds', 20, 2);
-            $table->decimal('B2CWorkingAccountAvailableFunds', 20, 2);
+            $table->decimal('transaction_amount');
+            $table->string('transaction_receipt')->unique();
+            $table->char('b2c_recipient_is_registered_customer', 1);
+            $table->decimal('b2c_charges_paid_account_available_funds');
+            $table->string('receiver_party_public_name');
+            $table->decimal('b2c_utility_account_available_funds', 11);
+            $table->decimal('b2c_working_account_available_funds', 11);
+            $table->timestamp('transaction_completed_date_time');
             $table->timestamps();
         });
     }

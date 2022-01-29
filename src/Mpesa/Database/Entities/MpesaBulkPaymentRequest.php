@@ -4,6 +4,7 @@ namespace DrH\Mpesa\Database\Entities;
 
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 /**
  * DrH\Mpesa\Database\Entities\MpesaBulkPaymentRequest
@@ -14,10 +15,10 @@ use Illuminate\Database\Eloquent\Model;
  * @property float $amount
  * @property string $phone
  * @property string|null $remarks
- * @property string $CommandID
- * @property int|null $user_id
- * @property Carbon|null $created_at
- * @property Carbon|null $updated_at
+ * @property string $command_id
+ * @property int|null $relation_id
+ * @property Carbon $created_at
+ * @property Carbon $updated_at
  * @property-read MpesaBulkPaymentResponse $response
  * @mixin \Eloquent
  */
@@ -25,8 +26,8 @@ class MpesaBulkPaymentRequest extends Model
 {
     protected $guarded = [];
 
-    public function response()
+    public function response(): HasOne
     {
-        return $this->hasOne(MpesaBulkPaymentResponse::class, 'ConversationID', 'conversion_id');
+        return $this->hasOne(MpesaBulkPaymentResponse::class, 'conversation_id', 'conversion_id');
     }
 }

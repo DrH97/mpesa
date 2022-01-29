@@ -17,15 +17,14 @@ class CreateMpesaStkRequestsTable extends Migration
             'mpesa_stk_requests',
             function (Blueprint $table) {
                 $table->increments('id');
-                $table->string('phone');
-                $table->double('amount', 10, 2);
+                $table->string('phone', 15);
+                $table->decimal('amount');
                 $table->string('reference');
                 $table->string('description');
-                $table->string('status')->default('Requested');
-                $table->boolean('complete')->default(true);
-                $table->string('MerchantRequestID')->unique();
-                $table->string('CheckoutRequestID')->unique();
-                $table->unsignedInteger('user_id')->nullable();
+                $table->string('status')->default('REQUESTED');
+                $table->string('merchant_request_id')->unique();
+                $table->string('checkout_request_id')->unique();
+                $table->unsignedInteger('relation_id')->nullable();
                 $table->timestamps();
             }
         );

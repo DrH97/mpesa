@@ -17,19 +17,19 @@ class CreateMpesaC2bCallbacksTable extends Migration
             'mpesa_c2b_callbacks',
             function (Blueprint $table) {
                 $table->increments('id');
-                $table->string('TransactionType');
-                $table->string('TransID')->unique();
-                $table->string('TransTime');
-                $table->double('TransAmount', 10, 2);
-                $table->integer('BusinessShortCode');
-                $table->string('BillRefNumber');
-                $table->string('InvoiceNumber')->nullable();
-                $table->string('ThirdPartyTransID')->nullable();
-                $table->double('OrgAccountBalance', 10, 2);
-                $table->string('MSISDN');
-                $table->string('FirstName')->nullable();
-                $table->string('MiddleName')->nullable();
-                $table->string('LastName')->nullable();
+                $table->string('transaction_type');
+                $table->string('trans_id')->unique();
+                $table->string('trans_time');
+                $table->decimal('trans_amount');
+                $table->integer('business_short_code');
+                $table->string('bill_ref_number');
+                $table->string('invoice_number')->nullable();
+                $table->string('third_party_trans_id')->nullable();
+                $table->decimal('org_account_balance', 11);
+                $table->string('msisdn');
+                $table->string('first_name')->nullable();
+                $table->string('middle_name')->nullable();
+                $table->string('last_name')->nullable();
                 $table->timestamps();
             }
         );

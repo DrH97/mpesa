@@ -1,8 +1,8 @@
 <?php
 
-use Illuminate\Support\Facades\Schema;
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
 
 class CreateMpesaBulkPaymentResponsesTable extends Migration
 {
@@ -15,15 +15,15 @@ class CreateMpesaBulkPaymentResponsesTable extends Migration
     {
         Schema::create('mpesa_bulk_payment_responses', function (Blueprint $table) {
             $table->increments('id');
-            $table->smallInteger('ResultType');
-            $table->smallInteger('ResultCode');
-            $table->string('ResultDesc');
-            $table->string('OriginatorConversationID');
-            $table->string('ConversationID');
-            $table->string('TransactionID');
+            $table->smallInteger('result_type');
+            $table->smallInteger('result_code');
+            $table->string('result_desc');
+            $table->string('originator_conversation_id');
+            $table->string('conversation_id');
+            $table->string('transaction_id');
             $table->timestamps();
 
-            $table->foreign('ConversationID')
+            $table->foreign('conversation_id')
                 ->references('conversation_id')
                 ->on('mpesa_bulk_payment_requests')->onDelete('restrict')->onUpdate('restrict');
         });

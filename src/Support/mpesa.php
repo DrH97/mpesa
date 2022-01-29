@@ -9,10 +9,7 @@ use DrH\Mpesa\Library\Simulate;
 use GuzzleHttp\Exception\GuzzleException;
 
 if (!function_exists('mpesa_balance')) {
-    /**
-     * @return mixed
-     */
-    function mpesa_balance()
+    function mpesa_balance(): mixed
     {
         return B2C::balance();
     }

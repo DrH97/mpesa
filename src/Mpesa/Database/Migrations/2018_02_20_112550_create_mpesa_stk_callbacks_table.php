@@ -1,8 +1,8 @@
 <?php
 
-use Illuminate\Support\Facades\Schema;
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
 
 class CreateMpesaStkCallbacksTable extends Migration
 {
@@ -15,18 +15,19 @@ class CreateMpesaStkCallbacksTable extends Migration
     {
         Schema::create('mpesa_stk_callbacks', function (Blueprint $table) {
             $table->increments('id');
-            $table->string('MerchantRequestID')->index();
-            $table->string('CheckoutRequestID')->index();
-            $table->integer('ResultCode');
-            $table->string('ResultDesc');
-            $table->double('Amount', 10, 2)->nullable();
-            $table->string('MpesaReceiptNumber')->nullable();
-            $table->string('Balance')->nullable()->nullable();
-            $table->string('TransactionDate')->nullable();
-            $table->string('PhoneNumber')->nullable();
+            $table->string('merchant_request_id')->index();
+            $table->string('checkout_request_id')->index();
+            $table->integer('result_code');
+            $table->string('result_desc');
+            $table->decimal('amount')->nullable();
+            $table->string('mpesa_receipt_number')->nullable();
+            $table->decimal('balance')->nullable();
+            $table->string('phone')->nullable();
+            $table->string('transaction_date')->nullable();
+
             $table->timestamps();
-            $table->foreign('CheckoutRequestID')
-                ->references('CheckoutRequestID')
+            $table->foreign('checkout_request_id')
+                ->references('checkout_request_id')
                 ->on('mpesa_stk_requests')->onDelete('cascade')->onUpdate('cascade');
         });
     }

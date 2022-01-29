@@ -9,21 +9,21 @@ use Illuminate\Database\Eloquent\Model;
  * DrH\Mpesa\Database\Entities\MpesaC2bCallback
  *
  * @property int $id
- * @property string $TransactionType
- * @property string $TransID
- * @property string $TransTime
- * @property float $TransAmount
- * @property int $BusinessShortCode
- * @property string $BillRefNumber
- * @property string|null $InvoiceNumber
- * @property string|null $ThirdPartyTransID
- * @property float $OrgAccountBalance
- * @property string $MSISDN
- * @property string|null $FirstName
- * @property string|null $MiddleName
- * @property string|null $LastName
- * @property Carbon|null $created_at
- * @property Carbon|null $updated_at
+ * @property string $transaction_type
+ * @property string $trans_id
+ * @property string $trans_time
+ * @property float $trans_amount
+ * @property int $business_short_code
+ * @property string $bill_ref_number
+ * @property string|null $invoice_number
+ * @property string|null $third_party_trans_id
+ * @property float $org_account_balance
+ * @property string $msisdn
+ * @property string|null $first_name
+ * @property string|null $middle_name
+ * @property string|null $last_name
+ * @property Carbon $created_at
+ * @property Carbon $updated_at
  * @property-read mixed $name
  * @mixin \Eloquent
  */
@@ -31,7 +31,7 @@ class MpesaC2bCallback extends Model
 {
     protected $guarded = [];
 
-    public function getNameAttribute()
+    public function getNameAttribute(): string
     {
         return $this->FirstName . ' ' . $this->MiddleName . ' ' . $this->LastName;
     }

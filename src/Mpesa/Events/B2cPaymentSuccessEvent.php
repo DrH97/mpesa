@@ -7,30 +7,16 @@ use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
-/**
- * Class B2cPaymentSuccessEvent
- * @package DrH\Events
- */
 class B2cPaymentSuccessEvent
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
-    /**
-     * @var MpesaBulkPaymentResponse
-     */
-    public $bulkPaymentResponse;
-    /**
-     * @var array
-     */
-    public $response;
 
     /**
      * B2cPaymentSuccessEvent constructor.
      * @param MpesaBulkPaymentResponse $mpesaBulkPaymentResponse
-     * @param array $response
+     * @param array $b2cResult
      */
-    public function __construct(MpesaBulkPaymentResponse $mpesaBulkPaymentResponse, $response)
+    public function __construct(public MpesaBulkPaymentResponse $mpesaBulkPaymentResponse, public array $b2cResult)
     {
-        $this->bulkPaymentResponse = $mpesaBulkPaymentResponse;
-        $this->response = $response;
     }
 }
