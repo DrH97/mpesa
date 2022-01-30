@@ -150,8 +150,8 @@ class StkPush extends ApiCore
                 'amount' => $body['Amount'],
                 'reference' => $body['AccountReference'],
                 'description' => $body['TransactionDesc'],
-                'CheckoutRequestID' => $response['CheckoutRequestID'],
-                'MerchantRequestID' => $response['MerchantRequestID'],
+                'checkout_request_id' => $response['CheckoutRequestID'],
+                'merchant_request_id' => $response['MerchantRequestID'],
                 'relation_id' => @(Auth::id() ?: request('user_id')),
             ];
             $stk = MpesaStkRequest::create($incoming);
