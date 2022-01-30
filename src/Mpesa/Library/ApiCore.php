@@ -4,45 +4,31 @@ namespace DrH\Mpesa\Library;
 
 use DrH\Mpesa\Exceptions\MpesaException;
 use DrH\Mpesa\Repositories\EndpointsRepository;
-use DrH\Mpesa\Repositories\Mpesa;
+use DrH\Mpesa\Repositories\MpesaRepository;
 use GuzzleHttp\Exception\ClientException;
+use GuzzleHttp\Exception\ConnectException;
+use GuzzleHttp\Exception\GuzzleException;
+use GuzzleHttp\Exception\ServerException;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
+use Psr\Http\Message\ResponseInterface;
 
-/**
- * Class ApiCore
- *
- * @package DrH\Mpesa\Library
- */
 class ApiCore
 {
-    /**
-     * @var Core
-     */
-    private $engine;
-    /**
-     * @var bool
-     */
-    public $bulk = false;
-    /**
-     * @var Mpesa
-     */
-    public $mpesaRepository;
+    public bool $bulk = false;
 
-    /**
-     * @var string
-     */
-    public $bearer;
+    public string $bearer;
+
+    private int $trials = 3;
 
     /**
      * ApiCore constructor.
      *
      * @param Core $engine
-     * @param Mpesa $mpesa
+     * @param MpesaRepository $mpesaRepository
      */
-    public function __construct(Core $engine, Mpesa $mpesa)
+    public function __construct(private Core $engine, protected MpesaRepository $mpesaRepository)
     {
-        $this->engine = $engine;
-        $this->mpesaRepository = $mpesa;
     }
 
     /**
@@ -50,7 +36,7 @@ class ApiCore
      * @param bool $strip_plus
      * @return string
      */
-    protected function formatPhoneNumber($number, $strip_plus = true): string
+    protected function formatPhoneNumber(string $number, bool $strip_plus = true): string
     {
         $number = preg_replace('/\s+/', '', $number);
         $replace = static function ($needle, $replacement) use (&$number) {
@@ -73,12 +59,12 @@ class ApiCore
     /**
      * @param array $body
      * @param string $endpoint
-     * @return \Psr\Http\Message\ResponseInterface
-     * @throws \DrH\Mpesa\Exceptions\MpesaException
-     * @throws \Exception
-     * @throws \GuzzleHttp\Exception\GuzzleException
+     * @param MpesaAccount|null $account
+     * @return ResponseInterface
+     * @throws GuzzleException
+     * @throws MpesaException
      */
-    private function makeRequest($body, $endpoint, MpesaAccount $account = null)
+    private function makeRequest(array $body, string $endpoint, MpesaAccount $account = null): ResponseInterface
     {
         if (\config('drh.mpesa.multi_tenancy', false)) {
             $this->bearer = $this->engine->auth->authenticate($this->bulk, $account);
@@ -102,22 +88,30 @@ class ApiCore
     /**
      * @param array $body
      * @param string $endpoint
+     * @param MpesaAccount|null $account
      * @return mixed
+     * @throws GuzzleException
      * @throws MpesaException
-     * @throws \GuzzleHttp\Exception\GuzzleException
      */
-    public function sendRequest($body, $endpoint, MpesaAccount $account = null)
+    public function sendRequest(array $body, string $endpoint, MpesaAccount $account = null): array
     {
         $endpoint = EndpointsRepository::build($endpoint, $account);
         try {
             $response = $this->makeRequest($body, $endpoint, $account);
-            $_body = \json_decode($response->getBody());
-            if ($response->getStatusCode() !== 200) {
-                throw new MpesaException($_body->errorMessage ? $_body->errorCode . ' - ' . $_body->errorMessage : $response->getBody());
-            }
-            return $_body;
-        } catch (ClientException $exception) {
+            $_body = json_decode($response->getBody(), true);
+
+            return (array)$_body;
+        } catch (ClientException|ServerException $exception) {
             throw $this->generateException($exception);
+        } catch (ConnectException $exception) {
+            Log::channel("mpesa")->error($exception);
+            Log::channel("mpesa")->error($this->trials . " trials left.");
+            if ($this->trials > 0) {
+                $this->trials--;
+                sleep(1);
+                return $this->sendRequest($body, $endpoint, $account);
+            }
+            throw new MpesaException('Mpesa Server Error');
         }
     }
 

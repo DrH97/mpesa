@@ -2,33 +2,21 @@
 
 namespace DrH\Mpesa\Library;
 
+use DrH\Mpesa\Exceptions\MpesaException;
 use GuzzleHttp\ClientInterface;
 
-/**
- * Class Core
- *
- * @package DrH\Mpesa\Library
- */
 class Core
 {
-    /**
-     * @var ClientInterface
-     */
-    public $client;
-    /**
-     * @var Authenticator
-     */
-    public $auth;
+    public Authenticator $auth;
 
     /**
      * Core constructor.
      *
-     * @param  ClientInterface $client
-     * @throws \DrH\Mpesa\Exceptions\MpesaException
+     * @param ClientInterface $client
+     * @throws MpesaException
      */
-    public function __construct(ClientInterface $client)
+    public function __construct(public ClientInterface $client)
     {
-        $this->client = $client;
         $this->auth = new Authenticator($this);
     }
 }

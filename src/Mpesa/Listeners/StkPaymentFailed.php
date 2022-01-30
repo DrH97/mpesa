@@ -4,10 +4,6 @@ namespace DrH\Mpesa\Listeners;
 
 use DrH\Mpesa\Events\StkPushPaymentFailedEvent;
 
-/**
- * Class StkPaymentFailed
- * @package DrH\Listeners
- */
 class StkPaymentFailed
 {
     /**
@@ -15,8 +11,7 @@ class StkPaymentFailed
      */
     public function handle(StkPushPaymentFailedEvent $event)
     {
-        /** @var \DrH\Mpesa\Database\Entities\MpesaStkCallback $stk */
-        $stk = $event->stk_callback;
-        $stk->request()->update(['status' => 'Failed']);
+        $stk = $event->stkCallback;
+        $stk->request()->update(['status' => 'FAILED']);
     }
 }

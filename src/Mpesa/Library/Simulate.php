@@ -5,10 +5,6 @@ namespace DrH\Mpesa\Library;
 use DrH\Mpesa\Exceptions\MpesaException;
 use GuzzleHttp\Exception\ClientException;
 
-/**
- * Class Simulate
- * @package DrH\Mpesa\Library
- */
 class Simulate extends ApiCore
 {
     /**

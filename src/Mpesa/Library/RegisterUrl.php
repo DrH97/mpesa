@@ -4,10 +4,6 @@ namespace DrH\Mpesa\Library;
 
 use DrH\Mpesa\Exceptions\MpesaException;
 
-/**
- * Class RegisterUrl
- * @package DrH\Mpesa\Library
- */
 class RegisterUrl extends ApiCore
 {
     /**

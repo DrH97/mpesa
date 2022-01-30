@@ -7,44 +7,32 @@ use DrH\Mpesa\Database\Entities\MpesaStkRequest;
 use DrH\Mpesa\Events\StkPushRequestedEvent;
 use DrH\Mpesa\Exceptions\MpesaException;
 use DrH\Mpesa\Repositories\Generator;
+use Exception;
 use GuzzleHttp\Exception\GuzzleException;
 use GuzzleHttp\Exception\RequestException;
 use Illuminate\Support\Facades\Auth;
+use function base64_encode;
+use function config;
+use function count;
+use function preg_match;
 
-/**
- * Class StkPush
- * @package DrH\Mpesa\Library
- */
 class StkPush extends ApiCore
 {
-    /**
-     * @var string
-     */
-    protected $number;
-    /**
-     * @var int
-     */
-    protected $amount;
-    /**
-     * @var string
-     */
-    protected $reference;
-    /**
-     * @var string
-     */
-    protected $description;
+    protected string $number;
+
+    protected int $amount;
+
+    protected string $reference;
+
+    protected string $description;
 
     /**
-     * @param string $amount
+     * @param int $amount
      * @return $this
-     * @throws \Exception
-     * @throws MpesaException
+     * @throws Exception
      */
-    public function request($amount): self
+    public function amount(int $amount): self
     {
-        if (!\is_numeric($amount)) {
-            throw new MpesaException('The amount must be numeric, got ' . $amount);
-        }
         $this->amount = $amount;
         return $this;
     }
@@ -53,7 +41,7 @@ class StkPush extends ApiCore
      * @param string $number
      * @return $this
      */
-    public function from($number): self
+    public function from(string $number): self
     {
         $this->number = $this->formatPhoneNumber($number);
         return $this;
@@ -65,13 +53,13 @@ class StkPush extends ApiCore
      * @param string $reference
      * @param string $description
      * @return $this
-     * @throws \Exception
+     * @throws Exception
      * @throws MpesaException
      */
-    public function usingReference($reference, $description): self
+    public function usingReference(string $reference, string $description): self
     {
-        \preg_match('/[^A-Za-z0-9]/', $reference, $matches);
-        if (\count($matches)) {
+        preg_match('/[^A-Za-z0-9]/', $reference, $matches);
+        if (count($matches)) {
             throw new MpesaException('Reference should be alphanumeric.');
         }
         $this->reference = $reference;
@@ -82,22 +70,28 @@ class StkPush extends ApiCore
     /**
      * Send a payment request
      *
-     * @param null|int $amount
-     * @param null|string $number
-     * @param null|string $reference
-     * @param null|string $description
+     * @param int|null $amount
+     * @param string|null $number
+     * @param string|null $reference
+     * @param string|null $description
      * @param MpesaAccount|null $account
      * @return mixed
      * @throws MpesaException
      * @throws GuzzleException
-     * @throws \Exception
+     * @throws Exception
      */
-    public function push($amount = null, $number = null, $reference = null, $description = null, MpesaAccount $account = null)
+    public function push(
+        int          $amount = null,
+        string       $number = null,
+        string       $reference = null,
+        string       $description = null,
+        MpesaAccount $account = null
+    ): MpesaStkRequest
     {
         $time = Carbon::now()->format('YmdHis');
 
-        if (\config('drh.mpesa.multi_tenancy', false) && ($account && !$account->sandbox)) {
-            if ($account == null || $account->passkey == null || $account->shortcode == null) {
+        if (config('drh.mpesa.multi_tenancy', false) && ($account && !$account->sandbox)) {
+            if ($account->passkey == null || $account->shortcode == null) {
                 throw new MpesaException("Multi Tenancy is enabled but Mpesa Account is null.");
             }
 
@@ -105,19 +99,18 @@ class StkPush extends ApiCore
             $passkey = $account->passkey;
 
             $transactionType = $account->type == "TILL" ? "CustomerBuyGoodsOnline" : "CustomerPayBillOnline";
-
         } else {
-            $shortCode = \config('drh.mpesa.c2b.short_code');
-            $passkey = \config('drh.mpesa.c2b.passkey');
+            $shortCode = config('drh.mpesa.c2b.short_code');
+            $passkey = config('drh.mpesa.c2b.passkey');
 
             $transactionType = config('drh.mpesa.c2b.transaction_type');
         }
 
-        $callback = \config('drh.mpesa.c2b.stk_callback');
+        $callback = config('drh.mpesa.c2b.stk_callback');
 
-        $partyB = \config('drh.mpesa.c2b.party_b');
+        $partyB = config('drh.mpesa.c2b.party_b');
 
-        $password = \base64_encode($shortCode . $passkey . $time);
+        $password = base64_encode($shortCode . $passkey . $time);
         $good_phone = $this->formatPhoneNumber($number ?: $this->number);
         $body = [
             'BusinessShortCode' => $shortCode,
@@ -133,7 +126,7 @@ class StkPush extends ApiCore
             'TransactionDesc' => $description ?? $this->description ?? Generator::generateTransactionNumber(),
         ];
 
-        if (\config('drh.mpesa.multi_tenancy', false)) {
+        if (config('drh.mpesa.multi_tenancy', false)) {
             $response = $this->sendRequest($body, 'stk_push', $account);
         } else {
             $response = $this->sendRequest($body, 'stk_push');
@@ -145,11 +138,11 @@ class StkPush extends ApiCore
     /**
      * @param array $body
      * @param array $response
-     * @return MpesaStkRequest|\Illuminate\Database\Eloquent\Model
-     * @throws \Exception
+     * @return MpesaStkRequest
+     * @throws Exception
      * @throws MpesaException
      */
-    private function saveStkRequest($body, $response)
+    private function saveStkRequest($body, $response): MpesaStkRequest
     {
         if ($response['ResponseCode'] == 0) {
             $incoming = [
@@ -159,7 +152,7 @@ class StkPush extends ApiCore
                 'description' => $body['TransactionDesc'],
                 'CheckoutRequestID' => $response['CheckoutRequestID'],
                 'MerchantRequestID' => $response['MerchantRequestID'],
-                'user_id' => @(Auth::id() ?: request('user_id')),
+                'relation_id' => @(Auth::id() ?: request('user_id')),
             ];
             $stk = MpesaStkRequest::create($incoming);
             event(new StkPushRequestedEvent($stk, request()));
@@ -169,29 +162,28 @@ class StkPush extends ApiCore
     }
 
     /**
-     * Validate an initialized transaction.
+     * Query a transaction.
      *
-     * @param string|int $checkoutRequestID
+     * @param string $checkoutRequestId
      *
-     * @return mixed
-     * @throws MpesaException
-     * @throws \Exception
+     * @return array
      * @throws GuzzleException
+     * @throws MpesaException
      */
-    public function validate($checkoutRequestID)
+    public function status(string $checkoutRequestId): array
     {
-        if ((int)$checkoutRequestID) {
-            $checkoutRequestID = MpesaStkRequest::find($checkoutRequestID)->CheckoutRequestID;
+        if ((int)$checkoutRequestId) {
+            $checkoutRequestId = MpesaStkRequest::find($checkoutRequestId)->checkout_request_id;
         }
         $time = Carbon::now()->format('YmdHis');
-        $shortCode = \config('drh.mpesa.c2b.short_code');
-        $passkey = \config('drh.mpesa.c2b.passkey');
-        $password = \base64_encode($shortCode . $passkey . $time);
+        $shortCode = config('drh.mpesa.c2b.short_code');
+        $passkey = config('drh.mpesa.c2b.passkey');
+        $password = base64_encode($shortCode . $passkey . $time);
         $body = [
             'BusinessShortCode' => $shortCode,
             'Password' => $password,
             'Timestamp' => $time,
-            'CheckoutRequestID' => $checkoutRequestID,
+            'CheckoutRequestID' => $checkoutRequestId,
         ];
         try {
             return $this->sendRequest($body, 'stk_status');

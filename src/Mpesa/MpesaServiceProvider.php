@@ -2,7 +2,6 @@
 
 namespace DrH\Mpesa;
 
-//use DrH\Mpesa\Commands\Registra;
 use DrH\Mpesa\Commands\StkStatus;
 use DrH\Mpesa\Events\B2cPaymentFailedEvent;
 use DrH\Mpesa\Events\B2cPaymentSuccessEvent;
@@ -24,10 +23,6 @@ use GuzzleHttp\Client;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\ServiceProvider;
 
-/**
- * Class MpesaServiceProvider
- * @package DrH\Mpesa
- */
 class MpesaServiceProvider extends ServiceProvider
 {
     /**
@@ -38,13 +33,12 @@ class MpesaServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        $core = new Core(new Client(['http_errors' => false,]));
+        $core = new Core(new Client());
         $this->app->bind(Core::class, function () use ($core) {
             return $core;
         });
         $this->commands(
             [
-            //                Registra::class,
                 StkStatus::class,
             ]
         );

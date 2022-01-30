@@ -5,10 +5,6 @@ namespace DrH\Mpesa\Listeners;
 
 use DrH\Mpesa\Events\B2cPaymentFailedEvent;
 
-/**
- * Class B2CFailedListener
- * @package DrH\Mpesa\Listeners
- */
 class B2cFailedListener
 {
     /**

@@ -3,11 +3,6 @@
 
 namespace DrH\Mpesa\Library;
 
-/**
- * Class MpesaAccount
- *
- * @package DrH\Mpesa\Library
- */
 class MpesaAccount
 {
     /**
