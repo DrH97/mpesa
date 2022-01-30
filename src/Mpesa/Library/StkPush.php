@@ -164,17 +164,15 @@ class StkPush extends ApiCore
     /**
      * Query a transaction.
      *
-     * @param string $checkoutRequestId
-     *
+     * @param int $stkRequestId
      * @return array
      * @throws GuzzleException
      * @throws MpesaException
      */
-    public function status(string $checkoutRequestId): array
+    public function status(int $stkRequestId): array
     {
-        if ((int)$checkoutRequestId) {
-            $checkoutRequestId = MpesaStkRequest::find($checkoutRequestId)->checkout_request_id;
-        }
+        $checkoutRequestId = MpesaStkRequest::find($stkRequestId)->checkout_request_id;
+
         $time = Carbon::now()->format('YmdHis');
         $shortCode = config('drh.mpesa.c2b.short_code');
         $passkey = config('drh.mpesa.c2b.passkey');

@@ -27,9 +27,9 @@ if (!function_exists('mpesa_id_check')) {
     }
 }
 if (!function_exists('mpesa_stk_status')) {
-    function mpesa_stk_status(string $checkoutRequestId): array
+    function mpesa_stk_status(string $stkRequestId): array
     {
-        return STK::status($checkoutRequestId);
+        return STK::status($stkRequestId);
     }
 }
 if (!function_exists('mpesa_request')) {

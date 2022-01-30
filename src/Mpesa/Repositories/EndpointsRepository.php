@@ -5,21 +5,16 @@ namespace DrH\Mpesa\Repositories;
 use DrH\Mpesa\Exceptions\MpesaException;
 use DrH\Mpesa\Library\MpesaAccount;
 
-/**
- * Class EndpointsRepository
- *
- * @package DrH\Mpesa\Repositories
- */
 class EndpointsRepository
 {
 
     /**
      * @param string $section
+     * @param MpesaAccount|null $account
      * @return string
-     * @throws \Exception
      * @throws MpesaException
      */
-    private static function getEndpoint($section, MpesaAccount $account = null): string
+    private static function getEndpoint(string $section, MpesaAccount $account = null): string
     {
         $list = [
             'auth' => 'oauth/v1/generate?grant_type=client_credentials',
@@ -41,9 +36,10 @@ class EndpointsRepository
 
     /**
      * @param string $suffix
+     * @param MpesaAccount|null $account
      * @return string
      */
-    private static function getUrl($suffix, MpesaAccount $account = null): string
+    private static function getUrl(string $suffix, MpesaAccount $account = null): string
     {
         $baseEndpoint = 'https://api.safaricom.co.ke/';
         if (\config('drh.mpesa.sandbox') || ($account && $account->sandbox)) {
@@ -53,12 +49,12 @@ class EndpointsRepository
     }
 
     /**
-     * @param $endpoint
+     * @param string $endpoint
+     * @param MpesaAccount|null $account
      * @return string
-     * @throws \Exception
      * @throws MpesaException
      */
-    public static function build($endpoint, MpesaAccount $account = null)
+    public static function build(string $endpoint, MpesaAccount $account = null): string
     {
         return self::getEndpoint($endpoint, $account);
     }

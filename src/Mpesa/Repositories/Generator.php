@@ -3,25 +3,27 @@
 namespace DrH\Mpesa\Repositories;
 
 use DrH\Mpesa\Exceptions\MpesaException;
+use Exception;
+use function config;
+use function is_file;
+use function random_int;
+use function strlen;
 
-/**
- * Class Generator
- * @package DrH\Repositories
- */
 class Generator
 {
     /**
      * Generate a random transaction number
      *
      * @return string
+     * @throws Exception
      */
     public static function generateTransactionNumber(): string
     {
         $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
-        $charactersLength = \strlen($characters);
+        $charactersLength = strlen($characters);
         $randomString = '';
         for ($i = 0; $i < 15; $i++) {
-            $randomString .= $characters[\random_int(0, $charactersLength - 1)];
+            $randomString .= $characters[random_int(0, $charactersLength - 1)];
         }
         return $randomString;
     }
@@ -31,14 +33,14 @@ class Generator
      * @return string
      * @throws MpesaException
      */
-    public static function computeSecurityCredential($initiatorPass): string
+    public static function computeSecurityCredential(string $initiatorPass): string
     {
-        if (\config('drh.mpesa.sandbox')) {
+        if (config('drh.mpesa.sandbox')) {
             $pubKeyFile = __DIR__ . '/../Support/sandbox.cer';
         } else {
             $pubKeyFile = __DIR__ . '/../Support/production.cer';
         }
-        if (\is_file($pubKeyFile)) {
+        if (is_file($pubKeyFile)) {
             $pubKey = file_get_contents($pubKeyFile);
         } else {
             throw new MpesaException('Please provide a valid public key file');
