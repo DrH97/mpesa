@@ -97,7 +97,7 @@ class MpesaController extends Controller
      */
     public function c2bConfirmation(Request $request): JsonResponse
     {
-        $this->repository->processConfirmation(json_encode($request->all()));
+        $this->repository->processC2bConfirmation(json_encode($request->all()));
         $resp = [
             'ResultCode' => 0,
             'ResultDesc' => 'Confirmation received successfully',

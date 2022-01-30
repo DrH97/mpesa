@@ -42,7 +42,7 @@ class C2bRegister extends ApiCore
      * @throws Exception
      * @throws MpesaException
      */
-    public function onTimeout(string $onTimeout = 'Completed'): self
+    public function onTimeout(string $onTimeout = 'Cancelled'): self
     {
         if ($onTimeout !== 'Completed' && $onTimeout !== 'Cancelled') {
             throw new MpesaException('Invalid timeout argument. Use Completed or Cancelled');

@@ -22,7 +22,7 @@ class CreateMpesaC2bCallbacksTable extends Migration
                 $table->string('trans_time');
                 $table->decimal('trans_amount');
                 $table->integer('business_short_code');
-                $table->string('bill_ref_number');
+                $table->string('bill_ref_number')->nullable();
                 $table->string('invoice_number')->nullable();
                 $table->string('third_party_trans_id')->nullable();
                 $table->decimal('org_account_balance', 11);

@@ -68,7 +68,7 @@ class MpesaRepository
      * @param string $json
      * @return MpesaC2bCallback
      */
-    public function processConfirmation(string $json): MpesaC2bCallback
+    public function processC2bConfirmation(string $json): MpesaC2bCallback
     {
         $data = json_decode($json, true);
         $callback = MpesaC2bCallback::create($data);
