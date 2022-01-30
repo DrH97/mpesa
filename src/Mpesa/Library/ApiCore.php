@@ -9,7 +9,6 @@ use GuzzleHttp\Exception\ClientException;
 use GuzzleHttp\Exception\ConnectException;
 use GuzzleHttp\Exception\GuzzleException;
 use GuzzleHttp\Exception\ServerException;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use Psr\Http\Message\ResponseInterface;
 
@@ -104,8 +103,8 @@ class ApiCore
         } catch (ClientException|ServerException $exception) {
             throw $this->generateException($exception);
         } catch (ConnectException $exception) {
-            Log::channel("mpesa")->error($exception);
-            Log::channel("mpesa")->error($this->trials . " trials left.");
+            mpesaLogError($exception);
+            mpesaLogInfo($this->trials . " trials left.");
             if ($this->trials > 0) {
                 $this->trials--;
                 sleep(1);
@@ -116,10 +115,10 @@ class ApiCore
     }
 
     /**
-     * @param ClientException $exception
+     * @param ClientException|ServerException $exception
      * @return MpesaException
      */
-    private function generateException(ClientException $exception): MpesaException
+    private function generateException(ClientException|ServerException $exception): MpesaException
     {
         return new MpesaException($exception->getResponse()->getBody());
     }

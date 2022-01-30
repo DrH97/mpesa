@@ -4,7 +4,6 @@ namespace DrH\Mpesa\Commands;
 
 use DrH\Mpesa\Repositories\MpesaRepository;
 use Illuminate\Console\Command;
-use Illuminate\Support\Facades\Log;
 
 class StkStatus extends Command
 {
@@ -38,12 +37,25 @@ class StkStatus extends Command
      */
     public function handle()
     {
-        Log::info($this->description);
+        mpesaLogInfo($this->description);
 
         $results = $this->repository->queryStkStatus();
 
         /** @var array $results */
-        Log::info($results['successful']);
-        Log::error($results['errors']);
+        if (count($results['successful'])) {
+            $this->info("Logging successful queries");
+
+            mpesaLogInfo($results['successful']);
+        }
+
+        if (count($results['errors'])) {
+            $this->info("Logging failed queries");
+
+            mpesaLogError($results['errors']);
+        }
+
+        if (empty($results['successful']) && empty($results['errors'])) {
+            $this->comment("Nothing to query... all transactions seem to be ok.");
+        }
     }
 }

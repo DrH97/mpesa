@@ -1,6 +1,5 @@
 <?php
 
-
 namespace DrH\Mpesa\Library;
 
 class MpesaAccount

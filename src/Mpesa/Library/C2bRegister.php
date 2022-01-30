@@ -8,7 +8,6 @@ use GuzzleHttp\Exception\GuzzleException;
 
 class C2bRegister extends ApiCore
 {
-
     protected int $shortCode;
 
     protected string $validationURL;

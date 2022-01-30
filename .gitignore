@@ -6,3 +6,6 @@ composer.lock
 yarn.lock
 .DS_Store
 .idea/
+
+coverage/
+.phpunit.result.cache

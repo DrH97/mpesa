@@ -7,7 +7,6 @@ use DrH\Mpesa\Library\MpesaAccount;
 
 class EndpointsRepository
 {
-
     /**
      * @param string $section
      * @param MpesaAccount|null $account

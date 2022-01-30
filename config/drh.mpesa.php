@@ -42,11 +42,11 @@ return [
         /*
          * Consumer Key from developer portal
          */
-        'consumer_key' => env('MPESA_KEY', 'uIeJwZwAWTbrNxQ8GypnDWSPtKXRbGql'),
+        'consumer_key' => env('MPESA_KEY', '1mLKGyGUdx4BfosXGDQtVXWFRD9By8xu'),
         /*
          * Consumer secret from developer portal
          */
-        'consumer_secret' => env('MPESA_SECRET', '6084w7ANkYErHipt'),
+        'consumer_secret' => env('MPESA_SECRET', 'kEuTSaAlzZdxI3dc'),
         /*
          * HTTP callback method [POST,GET]
          */

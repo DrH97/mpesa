@@ -10,7 +10,9 @@ use Illuminate\Queue\SerializesModels;
 
 class StkPushRequestedEvent
 {
-    use Dispatchable, InteractsWithSockets, SerializesModels;
+    use Dispatchable;
+    use InteractsWithSockets;
+    use SerializesModels;
 
     /**
      * StkPushRequestedEvent constructor.

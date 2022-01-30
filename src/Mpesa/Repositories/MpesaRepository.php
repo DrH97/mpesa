@@ -152,7 +152,7 @@ class MpesaRepository
                     'result_desc' => $status->ResultDesc,
                     'amount' => $item->amount,
                 ];
-                $errors[$item->checkout_request_id] = $status->ResultDesc;
+                $success[$item->checkout_request_id] = $status->ResultDesc;
                 $callback = MpesaStkCallback::create($attributes);
                 $this->fireStkEvent($callback, get_object_vars($status));
             } catch (Exception $e) {
