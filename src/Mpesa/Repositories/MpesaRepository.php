@@ -19,32 +19,32 @@ use JetBrains\PhpStorm\ArrayShape;
 
 class MpesaRepository
 {
-//    /**
-//     * @param string $json
-//     * @return MpesaStkCallback
-//     */
-//    public function processStkPushCallback(string $json): MpesaStkCallback
-//    {
-//        $object = json_decode($json);
-//        $data = $object->stkCallback;
-//        $real_data = [
-//            'MerchantRequestID' => $data->MerchantRequestID,
-//            'CheckoutRequestID' => $data->CheckoutRequestID,
-//            'ResultCode' => $data->ResultCode,
-//            'ResultDesc' => $data->ResultDesc,
-//        ];
-//        if ($data->ResultCode == 0) {
-//            $_payload = $data->CallbackMetadata->Item;
-//            foreach ($_payload as $callback) {
-//                $real_data[$callback->Name] = @$callback->Value;
-//            }
-//            $callback = MpesaStkCallback::create($real_data);
-//        } else {
-//            $callback = MpesaStkCallback::create($real_data);
-//        }
-//        $this->fireStkEvent($callback, get_object_vars($data));
-//        return $callback;
-//    }
+    /**
+     * @param string $json
+     * @return MpesaStkCallback
+     */
+    public function processStkPushCallback(string $json): MpesaStkCallback
+    {
+        $object = json_decode($json);
+        $data = $object->stkCallback;
+        $real_data = [
+            'merchant_request_id' => $data->MerchantRequestID,
+            'checkout_request_id' => $data->CheckoutRequestID,
+            'result_code' => $data->ResultCode,
+            'result_desc' => $data->ResultDesc,
+        ];
+        if ($data->ResultCode == 0) {
+            $_payload = $data->CallbackMetadata->Item;
+            foreach ($_payload as $callback) {
+                $real_data[$callback->Name] = @$callback->Value;
+            }
+            $callback = MpesaStkCallback::create($real_data);
+        } else {
+            $callback = MpesaStkCallback::create($real_data);
+        }
+        $this->fireStkEvent($callback, get_object_vars($data));
+        return $callback;
+    }
 
     /**
      * @param $response
@@ -127,7 +127,6 @@ class MpesaRepository
         if ($initiator === 'b2c') {
             return $this->handleB2cResult();
         }
-        return;
     }
 
     /**

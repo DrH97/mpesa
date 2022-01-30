@@ -13,14 +13,14 @@ class StkStatus extends Command
      *
      * @var string
      */
-    protected $signature = 'mpesa:query_status';
+    protected $signature = 'mpesa:query_stk_status';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Check status of all pending transactions';
+    protected $description = 'Check status of all pending stk transactions';
 
     /**
      * Create a new command instance.
@@ -38,6 +38,8 @@ class StkStatus extends Command
      */
     public function handle()
     {
+        Log::info($this->description);
+
         $results = $this->repository->queryStkStatus();
 
         /** @var array $results */

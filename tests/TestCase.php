@@ -9,11 +9,8 @@ use DrH\Mpesa\Facades\STK;
 use DrH\Mpesa\MpesaServiceProvider;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use JetBrains\PhpStorm\ArrayShape;
 
-/**
- * Class TestCase
- * @package DrH\Tests
- */
 class TestCase extends \Orchestra\Testbench\TestCase
 {
     use RefreshDatabase;
@@ -22,12 +19,13 @@ class TestCase extends \Orchestra\Testbench\TestCase
      * @param Application $app
      * @return array
      */
-    protected function getPackageProviders($app)
+    protected function getPackageProviders($app): array
     {
         return [MpesaServiceProvider::class];
     }
 
-    protected function getPackageAliases($app)
+    #[ArrayShape(['B2C' => "string", 'Identity' => "string", 'Registrar' => "string", 'STK' => "string"])]
+    protected function getPackageAliases($app): array
     {
         return [
             'B2C' => B2C::class,

@@ -3,59 +3,34 @@
 namespace DrH\Mpesa\Library;
 
 use DrH\Mpesa\Exceptions\MpesaException;
+use Exception;
+use GuzzleHttp\Exception\GuzzleException;
 
-class RegisterUrl extends ApiCore
+class C2bRegister extends ApiCore
 {
-    /**
-     * The short code to register callbacks for.
-     *
-     * @var string
-     */
-    protected $shortCode;
-    /**
-     * The validation callback.
-     *
-     * @var
-     */
-    protected $validationURL;
-    /**
-     * The confirmation callback.
-     *
-     * @var
-     */
-    protected $confirmationURL;
-    /**
-     * The status of the request in case a timeout occurs.
-     *
-     * @var string
-     */
-    protected $onTimeout = 'Completed';
 
-    /**
-     * @param $shortCode
-     * @return $this
-     */
-    public function register($shortCode)
+    protected int $shortCode;
+
+    protected string $validationURL;
+
+    protected string $confirmationURL;
+
+    protected string $onTimeout = 'Completed';
+
+    public function shortcode(int $shortCode): self
     {
         $this->shortCode = $shortCode;
         return $this;
     }
 
-    /**
-     * @param string $validationURL
-     * @return $this
-     */
-    public function onValidation($validationURL)
+    public function onValidation(string $validationURL): self
     {
         $this->validationURL = $validationURL;
         return $this;
     }
 
-    /**
-     * @param $confirmationURL
-     * @return $this
-     */
-    public function onConfirmation($confirmationURL)
+
+    public function onConfirmation(string $confirmationURL): self
     {
         $this->confirmationURL = $confirmationURL;
         return $this;
@@ -64,10 +39,10 @@ class RegisterUrl extends ApiCore
     /**
      * @param string $onTimeout
      * @return $this
-     * @throws \Exception
+     * @throws Exception
      * @throws MpesaException
      */
-    public function onTimeout($onTimeout = 'Completed')
+    public function onTimeout(string $onTimeout = 'Completed'): self
     {
         if ($onTimeout !== 'Completed' && $onTimeout !== 'Cancelled') {
             throw new MpesaException('Invalid timeout argument. Use Completed or Cancelled');
@@ -83,10 +58,15 @@ class RegisterUrl extends ApiCore
      * @param string|null $onTimeout
      * @return mixed
      * @throws MpesaException
-     * @throws \Exception
-     * @throws \GuzzleHttp\Exception\GuzzleException
+     * @throws Exception
+     * @throws GuzzleException
      */
-    public function submit($shortCode = null, $confirmationURL = null, $validationURL = null, $onTimeout = null)
+    public function submit(
+        string $shortCode = null,
+        string $confirmationURL = null,
+        string $validationURL = null,
+        string $onTimeout = null
+    ): array
     {
         if ($onTimeout && $onTimeout !== 'Completed' && $onTimeout = 'Cancelled') {
             throw new MpesaException('Invalid timeout argument. Use Completed or Cancelled');
@@ -97,6 +77,6 @@ class RegisterUrl extends ApiCore
             'ConfirmationURL' => $confirmationURL ?: $this->confirmationURL,
             'ValidationURL' => $validationURL ?: $this->validationURL
         ];
-        return $this->sendRequest($body, 'register');
+        return $this->sendRequest($body, 'c2b_register_urls');
     }
 }

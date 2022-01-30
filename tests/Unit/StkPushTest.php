@@ -5,13 +5,14 @@ namespace DrH\Tests\Unit;
 use DrH\Mpesa\Exceptions\MpesaException;
 use DrH\Mpesa\Library\MpesaAccount;
 use DrH\Tests\TestCase;
+use Illuminate\Foundation\Application;
 
 class StkPushTest extends TestCase
 {
     /**
      * Define environment setup.
      *
-     * @param \Illuminate\Foundation\Application $app
+     * @param Application $app
      *
      * @return void
      */

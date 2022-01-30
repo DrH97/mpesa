@@ -3,36 +3,29 @@
 namespace DrH\Mpesa\Http\Controllers;
 
 use DrH\Mpesa\Events\QueueTimeoutEvent;
-use DrH\Mpesa\Repositories\Mpesa;
+use DrH\Mpesa\Repositories\MpesaRepository;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
-/**
- * Class MpesaController
- * @package DrH\Http\Controllers
- */
 class MpesaController extends Controller
 {
     /**
-     * @var Mpesa
-     */
-    private $repository;
-
-    /**
      * MpesaController constructor.
-     * @param Mpesa $repository
+     * @param MpesaRepository $repository
      */
-    public function __construct(Mpesa $repository)
+    public function __construct(private MpesaRepository $repository)
     {
-        $this->repository = $repository;
     }
+
+    ######################################################################################
+    #   B2C Callbacks
 
     /**
      * @param Request $request
      * @param string|null $initiator
      * @return JsonResponse
      */
-    public function timeout(Request $request, $initiator = null)
+    public function b2cTimeout(Request $request, string $initiator = null): JsonResponse
     {
         event(new QueueTimeoutEvent($request, $initiator));
         return response()->json(
@@ -47,7 +40,7 @@ class MpesaController extends Controller
      * @param string|null $initiator
      * @return JsonResponse
      */
-    public function result($initiator = null)
+    public function b2cResult(string $initiator = null): JsonResponse
     {
         $this->repository->handleResult($initiator);
         return response()->json(
@@ -58,51 +51,18 @@ class MpesaController extends Controller
         );
     }
 
-    /**
-     * @param string|null $initiator
-     * @return JsonResponse
-     */
-    public function paymentCallback($initiator)
-    {
-        return response()->json(
-            [
-                'ResponseCode' => '00000000',
-                'ResponseDesc' => 'success'
-            ]
-        );
-    }
+    #   B2C Callbacks
+    ######################################################################################
+
+
+    ######################################################################################
+    #   STK Callbacks
 
     /**
      * @param Request $request
      * @return JsonResponse
      */
-    public function confirmation(Request $request)
-    {
-        $this->repository->processConfirmation(json_encode($request->all()));
-        $resp = [
-            'ResultCode' => 0,
-            'ResultDesc' => 'Confirmation received successfully',
-        ];
-        return response()->json($resp);
-    }
-
-    /**
-     * @return JsonResponse
-     */
-    public function callback()
-    {
-        $resp = [
-            'ResultCode' => 0,
-            'ResultDesc' => 'Callback received successfully',
-        ];
-        return response()->json($resp);
-    }
-
-    /**
-     * @param Request $request
-     * @return JsonResponse
-     */
-    public function stkCallback(Request $request)
+    public function stkCallback(Request $request): JsonResponse
     {
         $this->repository->processStkPushCallback(json_encode($request->Body));
         $resp = [
@@ -112,10 +72,17 @@ class MpesaController extends Controller
         return response()->json($resp);
     }
 
+    #   STK Callbacks
+    ######################################################################################
+
+
+    ######################################################################################
+    #   C2B Callbacks
+
     /**
      * @return JsonResponse
      */
-    public function validatePayment()
+    public function c2bValidation(): JsonResponse
     {
         $resp = [
             'ResultCode' => 0,
@@ -123,4 +90,21 @@ class MpesaController extends Controller
         ];
         return response()->json($resp);
     }
+
+    /**
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function c2bConfirmation(Request $request): JsonResponse
+    {
+        $this->repository->processConfirmation(json_encode($request->all()));
+        $resp = [
+            'ResultCode' => 0,
+            'ResultDesc' => 'Confirmation received successfully',
+        ];
+        return response()->json($resp);
+    }
+
+    #   C2B Callbacks
+    ######################################################################################
 }

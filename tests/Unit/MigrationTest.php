@@ -44,12 +44,13 @@ class MigrationTest extends TestCase
             'amount' => 70000,
             'reference' => 'Test Case',
             'description' => 'My tests are running',
-            'CheckoutRequestID' => 'ws_CO_02052018230213621',
-            'MerchantRequestID' => '10054-2753415-2'
+            'checkout_request_id' => 'ws_CO_02052018230213621',
+            'merchant_request_id' => '10054-2753415-2'
         ]);
         $request = MpesaStkRequest::first();
+
         $this->assertEquals(70000, $request->amount);
-        $this->assertEquals('ws_CO_02052018230213621', $request->CheckoutRequestID);
+        $this->assertEquals('ws_CO_02052018230213621', $request->checkout_request_id);
         $this->assertNotNull($request->created_at);
     }
 }

@@ -2,6 +2,7 @@
 
 namespace DrH\Mpesa;
 
+use DrH\Mpesa\Commands\C2bRegisterUrls;
 use DrH\Mpesa\Commands\StkStatus;
 use DrH\Mpesa\Events\B2cPaymentFailedEvent;
 use DrH\Mpesa\Events\B2cPaymentSuccessEvent;
@@ -10,9 +11,9 @@ use DrH\Mpesa\Events\StkPushPaymentFailedEvent;
 use DrH\Mpesa\Events\StkPushPaymentSuccessEvent;
 use DrH\Mpesa\Http\Middlewares\MpesaCors;
 use DrH\Mpesa\Library\BulkSender;
+use DrH\Mpesa\Library\C2bRegister;
 use DrH\Mpesa\Library\Core;
 use DrH\Mpesa\Library\IdCheck;
-use DrH\Mpesa\Library\RegisterUrl;
 use DrH\Mpesa\Library\StkPush;
 use DrH\Mpesa\Listeners\B2cFailedListener;
 use DrH\Mpesa\Listeners\B2cSuccessListener;
@@ -39,6 +40,7 @@ class MpesaServiceProvider extends ServiceProvider
         });
         $this->commands(
             [
+                C2bRegisterUrls::class,
                 StkStatus::class,
             ]
         );
@@ -73,7 +75,7 @@ class MpesaServiceProvider extends ServiceProvider
         $this->app->bind(
             'mpesa_registrar',
             function () {
-                return $this->app->make(RegisterUrl::class);
+                return $this->app->make(C2bRegister::class);
             }
         );
         $this->app->bind(

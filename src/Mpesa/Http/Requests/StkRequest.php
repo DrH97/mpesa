@@ -3,14 +3,12 @@
 namespace DrH\Mpesa\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use JetBrains\PhpStorm\ArrayShape;
 
-/**
- * Class StkRequest
- * @package DrH\Mpesa\Http\Requests
- */
 class StkRequest extends FormRequest
 {
-    public function rules()
+    #[ArrayShape(['amount' => "string", 'phone' => "string", 'reference' => "string", 'description' => "string"])]
+    public function rules(): array
     {
         return [
             'amount' => 'required|numeric',
@@ -18,15 +16,5 @@ class StkRequest extends FormRequest
             'reference' => 'required',
             'description' => 'required',
         ];
-    }
-
-    public function authorize()
-    {
-        return true;
-    }
-
-    public function messages()
-    {
-        return [];
     }
 }

@@ -78,16 +78,16 @@ return [
         /*
          * Stk callback URL
          */
-        'stk_callback' => env('APP_URL') . '/payments/callbacks/stk_callback',
+        'stk_callback' => env('APP_URL') . '/payments/callbacks/stk-callback',
         /*
          * Data is sent to this URL for successful payment
          */
-        'confirmation_url' => env('APP_URL') . '/payments/callbacks/confirmation',
+        'confirmation_url' => env('APP_URL') . '/payments/callbacks/c2b-confirmation',
         /*
          * Mpesa validation URL.
          * NOTE: You need to email MPESA to enable validation
          */
-        'validation_url' => env('APP_URL') . '/payments/callbacks/validate',
+        'validation_url' => env('APP_URL') . '/payments/callbacks/c2b-validation',
     ],
     /*
       |--------------------------------------------------------------------------

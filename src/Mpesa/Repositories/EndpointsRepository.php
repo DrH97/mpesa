@@ -19,7 +19,7 @@ class EndpointsRepository
         $list = [
             'auth' => 'oauth/v1/generate?grant_type=client_credentials',
             'id_check' => 'mpesa/checkidentity/v1/query',
-            'register' => 'mpesa/c2b/v1/registerurl',
+            'c2b_register_urls' => 'mpesa/c2b/v1/registerurl',
             'stk_push' => 'mpesa/stkpush/v1/processrequest',
             'stk_status' => 'mpesa/stkpushquery/v1/query',
             'b2c' => 'mpesa/b2c/v1/paymentrequest',
