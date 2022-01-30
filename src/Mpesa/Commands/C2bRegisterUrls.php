@@ -61,16 +61,16 @@ class C2bRegisterUrls extends Command
 
     private function askShortcode(): int
     {
-        return $this->ask('What is your shortcode', config('samerior.mpesa.c2b.short_code'));
+        return $this->ask('What is your shortcode', config('drh.mpesa.c2b.short_code'));
     }
 
     private function askConfirmationUrl(): string
     {
-        return $this->ask('Confirmation Url', config('samerior.mpesa.c2b.confirmation_url'));
+        return $this->ask('Confirmation Url', config('drh.mpesa.c2b.confirmation_url'));
     }
 
     private function askValidationUrl(): string
     {
-        return $this->ask('Validation Url', config('samerior.mpesa.c2b.validation_url'));
+        return $this->ask('Validation Url', config('drh.mpesa.c2b.validation_url'));
     }
 }
