@@ -1,7 +1,7 @@
 <?php
 
-use DrH\Mpesa\Database\Entities\MpesaBulkPaymentRequest;
-use DrH\Mpesa\Database\Entities\MpesaStkRequest;
+use DrH\Mpesa\Entities\MpesaBulkPaymentRequest;
+use DrH\Mpesa\Entities\MpesaStkRequest;
 use DrH\Mpesa\Facades\B2C;
 use DrH\Mpesa\Facades\Identity;
 use DrH\Mpesa\Facades\STK;

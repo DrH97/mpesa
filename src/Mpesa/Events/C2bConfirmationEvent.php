@@ -2,7 +2,7 @@
 
 namespace DrH\Mpesa\Events;
 
-use DrH\Mpesa\Database\Entities\MpesaC2bCallback;
+use DrH\Mpesa\Entities\MpesaC2bCallback;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;

@@ -55,7 +55,7 @@ class C2bRegister extends ApiCore
      * @param string|null $confirmationURL
      * @param string|null $validationURL
      * @param string|null $onTimeout
-     * @return mixed
+     * @return array
      * @throws MpesaException
      * @throws Exception
      * @throws GuzzleException
@@ -67,7 +67,7 @@ class C2bRegister extends ApiCore
         string $onTimeout = null
     ): array
     {
-        if ($onTimeout && $onTimeout !== 'Completed' && $onTimeout = 'Cancelled') {
+        if ($onTimeout && $onTimeout !== 'Completed' && $onTimeout !== 'Cancelled') {
             throw new MpesaException('Invalid timeout argument. Use Completed or Cancelled');
         }
         $body = [

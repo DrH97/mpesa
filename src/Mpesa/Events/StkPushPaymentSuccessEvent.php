@@ -2,7 +2,7 @@
 
 namespace DrH\Mpesa\Events;
 
-use DrH\Mpesa\Database\Entities\MpesaStkCallback;
+use DrH\Mpesa\Entities\MpesaStkCallback;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;

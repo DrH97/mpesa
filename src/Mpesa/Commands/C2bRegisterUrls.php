@@ -6,7 +6,6 @@ use DrH\Mpesa\Exceptions\MpesaException;
 use DrH\Mpesa\Library\C2bRegister;
 use GuzzleHttp\Exception\GuzzleException;
 use Illuminate\Console\Command;
-use JetBrains\PhpStorm\NoReturn;
 use function config;
 
 class C2bRegisterUrls extends Command
@@ -43,7 +42,6 @@ class C2bRegisterUrls extends Command
      * @throws GuzzleException
      * @throws MpesaException
      */
-    #[NoReturn]
     public function handle(): void
     {
         mpesaLogInfo($this->description);

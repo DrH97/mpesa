@@ -1,6 +1,6 @@
 <?php
 
-namespace DrH\Mpesa\Database\Entities;
+namespace DrH\Mpesa\Entities;
 
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
@@ -21,7 +21,7 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
  * @property Carbon $created_at
  * @property Carbon $updated_at
  * @property-read MpesaStkCallback $response
- * @mixin \Eloquent
+ *
  */
 class MpesaStkRequest extends Model
 {

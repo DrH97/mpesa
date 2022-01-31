@@ -88,7 +88,7 @@ class ApiCore
      * @param array $body
      * @param string $endpoint
      * @param MpesaAccount|null $account
-     * @return mixed
+     * @return array
      * @throws GuzzleException
      * @throws MpesaException
      */

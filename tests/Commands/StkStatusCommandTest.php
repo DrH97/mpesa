@@ -2,8 +2,8 @@
 
 namespace DrH\Mpesa\Tests\Commands;
 
-use DrH\Mpesa\Database\Entities\MpesaStkCallback;
-use DrH\Mpesa\Database\Entities\MpesaStkRequest;
+use DrH\Mpesa\Entities\MpesaStkCallback;
+use DrH\Mpesa\Entities\MpesaStkRequest;
 use DrH\Mpesa\Tests\MockServerTestCase;
 use GuzzleHttp\Psr7\Response;
 use Illuminate\Foundation\Testing\RefreshDatabase;

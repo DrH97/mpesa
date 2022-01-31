@@ -3,27 +3,22 @@
 namespace DrH\Mpesa\Library;
 
 use DrH\Mpesa\Exceptions\MpesaException;
+use Exception;
 use GuzzleHttp\Exception\ClientException;
+use GuzzleHttp\Exception\GuzzleException;
+use function config;
+use function json_decode;
 
 class Simulate extends ApiCore
 {
-    /**
-     * @var string
-     */
-    private $amount;
-    /**
-     * @var int
-     */
-    private $number;
-    /**
-     * @var string
-     */
-    private $command = 'CustomerPayBillOnline';
-    //CustomerBuyGoodsOnline
-    /**
-     * @var string
-     */
-    private $reference = 'Testing';
+
+    private int $amount;
+
+    private string $number;
+
+    private string $command;
+
+    private string $reference = 'Testing';
 
     /**
      * Set the request amount to be deducted.
@@ -31,14 +26,11 @@ class Simulate extends ApiCore
      * @param int $amount
      *
      * @return $this
-     * @throws \Exception
+     * @throws Exception
      * @throws MpesaException
      */
-    public function request($amount): self
+    public function request(int $amount): self
     {
-        if (!\is_numeric($amount)) {
-            throw new MpesaException('The amount must be numeric');
-        }
         $this->amount = $amount;
         return $this;
     }
@@ -52,9 +44,9 @@ class Simulate extends ApiCore
      * @return $this
      * @throws MpesaException
      */
-    public function from($number): self
+    public function from(string $number): self
     {
-        if (!starts_with($number, '2547')) {
+        if (!str_starts_with($number, '2547')) {
             throw new MpesaException('The subscriber number must start with 2547');
         }
         $this->number = $number;
@@ -77,40 +69,36 @@ class Simulate extends ApiCore
     /**
      * Set the unique command for this transaction type.
      *
-     * @param string $command
+     * @param string|null $command
      *
      * @return $this
-     * @throws MpesaException
      */
-    public function setCommand($command): self
+    public function setCommand(?string $command): self
     {
-        if (!\in_array($command, self::VALID_COMMANDS, true)) {
-            throw new MpesaException('Invalid command sent');
-        }
-        $this->command = $command;
+        $this->command = $command ?? config('drh.mpesa.c2b.transaction_type');
         return $this;
     }
 
     /**
      * Prepare the transaction simulation request
      *
-     * @param int $amount
-     * @param int $number
-     * @param string $reference
-     * @param string $command
+     * @param string|null $number
+     * @param int|null $amount
+     * @param string|null $reference
+     * @param string|null $command
      * @return mixed
      * @throws MpesaException
-     * @throws \GuzzleHttp\Exception\GuzzleException
+     * @throws GuzzleException
      */
-    public function push($number = null, $amount = null, $reference = null, $command = null)
+    public function push(string $number = null, int $amount = null, string $reference = null, string $command = null)
     {
-        if (!\config('drh.mpesa.sandbox', true)) {
+        if (!config('drh.mpesa.sandbox', true)) {
             throw new MpesaException('Cannot simulate a transaction in the live environment.');
         }
-        $shortCode = \config('drh.mpesa.c2b.short_code');
+        $shortCode = config('drh.mpesa.c2b.short_code');
         $good_phone = $this->formatPhoneNumber($number ?: $this->number);
         $body = [
-            'CommandID' => $command ?: $this->command,
+            'CommandID' => $command ?? $this->command ?? config('drh.mpesa.c2b.transaction_type'),
             'Amount' => $amount ?: $this->amount,
             'Msisdn' => $good_phone,
             'ShortCode' => $shortCode,
@@ -119,7 +107,7 @@ class Simulate extends ApiCore
         try {
             return $this->sendRequest($body, 'simulate');
         } catch (ClientException $exception) {
-            return \json_decode($exception->getResponse()->getBody());
+            return json_decode($exception->getResponse()->getBody());
         }
     }
 }

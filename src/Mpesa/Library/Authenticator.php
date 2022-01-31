@@ -7,7 +7,6 @@ use DrH\Mpesa\Repositories\EndpointsRepository;
 use GuzzleHttp\Exception\GuzzleException;
 use GuzzleHttp\Exception\RequestException;
 use Illuminate\Support\Facades\Cache;
-use JetBrains\PhpStorm\Pure;
 use Psr\Http\Message\ResponseInterface;
 use function base64_encode;
 use function config;
@@ -68,10 +67,9 @@ class Authenticator
 
     /**
      * @param string $reason
-     * @return MpesaException|null
+     * @return MpesaException
      */
-    #[Pure]
-    private function generateException(string $reason): ?MpesaException
+    private function generateException(string $reason): MpesaException
     {
         return match (strtolower($reason)) {
             'bad request: invalid credentials' =>
@@ -136,9 +134,9 @@ class Authenticator
     /**
      * Store the credentials in the cache.
      *
-     * @param $credentials
+     * @param mixed $credentials
      */
-    private function saveCredentials($credentials)
+    private function saveCredentials(mixed $credentials)
     {
         Cache::put($this->credentials, $credentials->access_token, 30);
     }

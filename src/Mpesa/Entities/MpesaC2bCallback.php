@@ -1,6 +1,6 @@
 <?php
 
-namespace DrH\Mpesa\Database\Entities;
+namespace DrH\Mpesa\Entities;
 
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
@@ -25,7 +25,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property Carbon $created_at
  * @property Carbon $updated_at
  * @property-read mixed $name
- * @mixin \Eloquent
+ *
  */
 class MpesaC2bCallback extends Model
 {
@@ -33,6 +33,6 @@ class MpesaC2bCallback extends Model
 
     public function getNameAttribute(): string
     {
-        return $this->FirstName . ' ' . $this->MiddleName . ' ' . $this->LastName;
+        return implode(' ', array_filter([$this->first_name, $this->middle_name, $this->last_name]));
     }
 }

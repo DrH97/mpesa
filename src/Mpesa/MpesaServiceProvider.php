@@ -53,7 +53,7 @@ class MpesaServiceProvider extends ServiceProvider
     public function boot()
     {
         $this->loadRoutesFrom(__DIR__ . '/Http/routes.php');
-        $this->loadMigrationsFrom(__DIR__ . '/Database/Migrations');
+        $this->loadMigrationsFrom(__DIR__ . '/../Database/Migrations');
         $this->publishes([__DIR__ . '/../../config/drh.mpesa.php' => config_path('drh.mpesa.php'),]);
 
         $this->app['router']->aliasMiddleware('pesa.cors', MpesaCors::class);

@@ -2,7 +2,7 @@
 
 namespace DrH\Mpesa\Facades;
 
-use DrH\Mpesa\Database\Entities\MpesaBulkPaymentRequest;
+use DrH\Mpesa\Entities\MpesaBulkPaymentRequest;
 use Illuminate\Support\Facades\Facade;
 
 /**

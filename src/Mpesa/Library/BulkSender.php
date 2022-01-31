@@ -2,7 +2,7 @@
 
 namespace DrH\Mpesa\Library;
 
-use DrH\Mpesa\Database\Entities\MpesaBulkPaymentRequest;
+use DrH\Mpesa\Entities\MpesaBulkPaymentRequest;
 use DrH\Mpesa\Exceptions\MpesaException;
 use Exception;
 use GuzzleHttp\Exception\GuzzleException;
@@ -15,8 +15,6 @@ class BulkSender extends ApiCore
     private int $amount;
 
     private string $remarks = 'Some remarks';
-
-    private int $trials = 3;
 
     /**
      * Set number to receive the funds
@@ -73,7 +71,7 @@ class BulkSender extends ApiCore
         $this->bulk = true;
 
         $response = $this->sendRequest($body, 'b2c');
-        return $this->mpesaRepository->saveB2cRequest($response, $body);
+        return $this->mpesaRepository->saveB2cRequest((object)$response, $body);
     }
 
     /**

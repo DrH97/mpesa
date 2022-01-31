@@ -1,6 +1,6 @@
 <?php
 
-namespace DrH\Mpesa\Database\Entities;
+namespace DrH\Mpesa\Entities;
 
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
@@ -20,7 +20,7 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
  * @property Carbon $created_at
  * @property Carbon $updated_at
  * @property-read MpesaBulkPaymentResponse $response
- * @mixin \Eloquent
+ *
  */
 class MpesaBulkPaymentRequest extends Model
 {
@@ -28,6 +28,6 @@ class MpesaBulkPaymentRequest extends Model
 
     public function response(): HasOne
     {
-        return $this->hasOne(MpesaBulkPaymentResponse::class, 'conversation_id', 'conversion_id');
+        return $this->hasOne(MpesaBulkPaymentResponse::class, 'conversation_id', 'conversation_id');
     }
 }

@@ -16,10 +16,7 @@ class StkController extends Controller
     public function initiatePush(StkRequest $request): JsonResponse
     {
         try {
-            $stk = STK::request($request->amount)
-                ->from($request->phone)
-                ->usingReference($request->reference, $request->description)
-                ->push();
+            $stk = STK::push($request->amount, $request->phone, $request->reference, $request->description);
         } catch (Exception $exception) {
             $stk = ['ResponseCode' => 900,
                 'ResponseDescription' => 'Invalid request', 'extra' => $exception->getMessage()];

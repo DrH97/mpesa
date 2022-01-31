@@ -2,7 +2,7 @@
 
 namespace DrH\Mpesa\Facades;
 
-use DrH\Mpesa\Database\Entities\MpesaStkRequest as MSR;
+use DrH\Mpesa\Entities\MpesaStkRequest as MSR;
 use DrH\Mpesa\Library\MpesaAccount;
 use Illuminate\Support\Facades\Facade;
 

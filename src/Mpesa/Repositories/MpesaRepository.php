@@ -2,11 +2,11 @@
 
 namespace DrH\Mpesa\Repositories;
 
-use DrH\Mpesa\Database\Entities\MpesaBulkPaymentRequest;
-use DrH\Mpesa\Database\Entities\MpesaBulkPaymentResponse;
-use DrH\Mpesa\Database\Entities\MpesaC2bCallback;
-use DrH\Mpesa\Database\Entities\MpesaStkCallback;
-use DrH\Mpesa\Database\Entities\MpesaStkRequest;
+use DrH\Mpesa\Entities\MpesaBulkPaymentRequest;
+use DrH\Mpesa\Entities\MpesaBulkPaymentResponse;
+use DrH\Mpesa\Entities\MpesaC2bCallback;
+use DrH\Mpesa\Entities\MpesaStkCallback;
+use DrH\Mpesa\Entities\MpesaStkRequest;
 use DrH\Mpesa\Events\B2cPaymentFailedEvent;
 use DrH\Mpesa\Events\B2cPaymentSuccessEvent;
 use DrH\Mpesa\Events\C2bConfirmationEvent;
@@ -51,7 +51,7 @@ class MpesaRepository
      * @param array $body
      * @return MpesaBulkPaymentRequest
      */
-    public function saveB2cRequest($response, array $body = []): MpesaBulkPaymentRequest
+    public function saveB2cRequest(object $response, array $body = []): MpesaBulkPaymentRequest
     {
         return MpesaBulkPaymentRequest::create([
             'conversation_id' => $response->ConversationID,
@@ -115,7 +115,7 @@ class MpesaRepository
     {
         $params_payload = $params['ResultParameter'];
         $new_params = Arr::pluck($params_payload, 'Value', 'Key');
-        $response->resultParams()->create($new_params);
+        $response->resultParameter()->create($new_params);
     }
 
     /**

@@ -2,7 +2,7 @@
 
 namespace DrH\Mpesa\Events;
 
-use DrH\Mpesa\Database\Entities\MpesaStkRequest;
+use DrH\Mpesa\Entities\MpesaStkRequest;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Http\Request;

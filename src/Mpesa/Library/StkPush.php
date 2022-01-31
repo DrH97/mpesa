@@ -3,7 +3,7 @@
 namespace DrH\Mpesa\Library;
 
 use Carbon\Carbon;
-use DrH\Mpesa\Database\Entities\MpesaStkRequest;
+use DrH\Mpesa\Entities\MpesaStkRequest;
 use DrH\Mpesa\Events\StkPushRequestedEvent;
 use DrH\Mpesa\Exceptions\MpesaException;
 use DrH\Mpesa\Repositories\Generator;
@@ -75,7 +75,7 @@ class StkPush extends ApiCore
      * @param string|null $reference
      * @param string|null $description
      * @param MpesaAccount|null $account
-     * @return mixed
+     * @return MpesaStkRequest
      * @throws MpesaException
      * @throws GuzzleException
      * @throws Exception

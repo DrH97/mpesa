@@ -2,7 +2,7 @@
 
 namespace DrH\Mpesa\Events;
 
-use DrH\Mpesa\Database\Entities\MpesaBulkPaymentResponse;
+use DrH\Mpesa\Entities\MpesaBulkPaymentResponse;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
