@@ -2,10 +2,12 @@
 
 namespace DrH\Mpesa\Library;
 
-use DrH\Mpesa\Exceptions\MpesaException;
+use DrH\Mpesa\Exceptions\ClientException;
+use DrH\Mpesa\Exceptions\ExternalServiceException;
 use DrH\Mpesa\Repositories\EndpointsRepository;
+use GuzzleHttp\Exception\ConnectException;
 use GuzzleHttp\Exception\GuzzleException;
-use GuzzleHttp\Exception\RequestException;
+use GuzzleHttp\Exception\ServerException;
 use Illuminate\Support\Facades\Cache;
 use Psr\Http\Message\ResponseInterface;
 use function base64_encode;
@@ -21,11 +23,13 @@ class Authenticator
 
     private string $credentials;
 
+    private int $trials = 3;
+
     /**
      * Authenticator constructor.
      *
      * @param Core $engine
-     * @throws MpesaException
+     * @throws ClientException
      */
     public function __construct(protected Core $engine)
     {
@@ -36,8 +40,8 @@ class Authenticator
      * @param bool $bulk
      * @param MpesaAccount|null $account
      * @return string|null
+     * @throws ClientException|ExternalServiceException
      * @throws GuzzleException
-     * @throws MpesaException
      */
     public function authenticate(bool $bulk = false, MpesaAccount $account = null): ?string
     {
@@ -50,38 +54,41 @@ class Authenticator
         }
         try {
             $response = $this->makeRequest();
-            if ($response->getStatusCode() === 200) {
-                $body = json_decode($response->getBody());
-                $this->saveCredentials($body);
-                return $body->access_token;
+            $body = json_decode($response->getBody());
+            $this->saveCredentials($body);
+            return $body->access_token;
+        } catch (\GuzzleHttp\Exception\ClientException|ServerException $exception) {
+            mpesaLogError($exception->getMessage());
+            throw $this->generateException($exception);
+        } catch (ConnectException $exception) {
+            mpesaLogError($exception->getMessage());
+            mpesaLogInfo($this->trials . " auth trials left.");
+            if ($this->trials > 0) {
+                $this->trials--;
+                sleep(.2);
+                return $this->authenticate($bulk, $account);
             }
-            throw new MpesaException($response->getReasonPhrase());
-        } catch (RequestException $exception) {
-            $message = $exception->getResponse() ?
-                $exception->getResponse()->getReasonPhrase() :
-                $exception->getMessage();
-
-            throw $this->generateException($message);
+            throw new ExternalServiceException('Mpesa Server Auth Error');
         }
     }
 
     /**
      * @param string $reason
-     * @return MpesaException
+     * @return ClientException
      */
-    private function generateException(string $reason): MpesaException
+    private function generateException(string $reason): ClientException
     {
         return match (strtolower($reason)) {
             'bad request: invalid credentials' =>
-            new MpesaException('Invalid consumer key and secret combination'),
-            default => new MpesaException($reason),
+            new ClientException('Invalid consumer key and secret combination'),
+            default => new ClientException($reason),
         };
     }
 
     /**
      * @param MpesaAccount|null $account
      * @return void
-     * @throws MpesaException
+     * @throws ClientException
      */
     private function generateCredentials(MpesaAccount $account = null): void
     {

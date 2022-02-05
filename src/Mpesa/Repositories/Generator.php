@@ -2,7 +2,7 @@
 
 namespace DrH\Mpesa\Repositories;
 
-use DrH\Mpesa\Exceptions\MpesaException;
+use DrH\Mpesa\Exceptions\ClientException;
 use Exception;
 use function config;
 use function is_file;
@@ -31,7 +31,7 @@ class Generator
     /**
      * @param string $initiatorPass
      * @return string
-     * @throws MpesaException
+     * @throws ClientException
      */
     public static function computeSecurityCredential(string $initiatorPass): string
     {
@@ -43,7 +43,7 @@ class Generator
         if (is_file($pubKeyFile)) {
             $pubKey = file_get_contents($pubKeyFile);
         } else {
-            throw new MpesaException('Please provide a valid public key file');
+            throw new ClientException('Please provide a valid public key file');
         }
         openssl_public_encrypt($initiatorPass, $encrypted, $pubKey, OPENSSL_PKCS1_PADDING);
         return base64_encode($encrypted);

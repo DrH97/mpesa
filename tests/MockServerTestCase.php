@@ -2,24 +2,25 @@
 
 namespace DrH\Mpesa\Tests;
 
+use DrH\Mpesa\Library\ApiCore;
 use DrH\Mpesa\Library\Core;
+use DrH\Mpesa\Repositories\MpesaRepository;
 use GuzzleHttp\Client;
 use GuzzleHttp\Handler\MockHandler;
 use GuzzleHttp\HandlerStack;
+use GuzzleHttp\Psr7\Response;
 
 abstract class MockServerTestCase extends TestCase
 {
     protected Core $client;
+
+    protected ApiCore $core;
 
     protected MockHandler $mock;
 
     protected function setUp(): void
     {
         parent::setUp();
-
-//        Config::set('tanda.client_id', 'somethinggoeshere');
-//        Config::set('tanda.client_secret', 'somethinggoeshere');
-//        Config::set('tanda.organization_id', 'somethinggoeshere');
 
         $this->mock = new MockHandler();
 
@@ -29,6 +30,19 @@ abstract class MockServerTestCase extends TestCase
         $this->app->bind(Core::class, function () {
             return $this->client;
         });
+
+        $this->core = new ApiCore($this->client, new MpesaRepository());
+    }
+
+    protected function addMock(array $expected, int $status = 200)
+    {
+        $this->mock->append(
+            new Response(
+                $status,
+                ['Content_type' => 'application/json'],
+                json_encode($expected)
+            )
+        );
     }
 
     protected array $mockResponses = [
@@ -40,7 +54,7 @@ abstract class MockServerTestCase extends TestCase
             'error' => [
                 'requestId' => '93975-16241949-2',
                 'errorCode' => '400.008.01',
-                'errorMessage' => 'URLs are already registered'
+                'errorMessage' => 'Bad Request - invalid credentials'
             ]
         ],
         'stk' => [

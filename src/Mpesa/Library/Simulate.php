@@ -2,8 +2,7 @@
 
 namespace DrH\Mpesa\Library;
 
-use DrH\Mpesa\Exceptions\MpesaException;
-use Exception;
+use DrH\Mpesa\Exceptions\ExternalServiceException;
 use GuzzleHttp\Exception\ClientException;
 use GuzzleHttp\Exception\GuzzleException;
 use function config;
@@ -26,8 +25,6 @@ class Simulate extends ApiCore
      * @param int $amount
      *
      * @return $this
-     * @throws Exception
-     * @throws MpesaException
      */
     public function request(int $amount): self
     {
@@ -42,12 +39,12 @@ class Simulate extends ApiCore
      * @param string $number
      *
      * @return $this
-     * @throws MpesaException
+     * @throws \DrH\Mpesa\Exceptions\ClientException
      */
     public function from(string $number): self
     {
         if (!str_starts_with($number, '2547')) {
-            throw new MpesaException('The subscriber number must start with 2547');
+            throw new \DrH\Mpesa\Exceptions\ClientException('The subscriber number must start with 2547');
         }
         $this->number = $number;
         return $this;
@@ -56,11 +53,11 @@ class Simulate extends ApiCore
     /**
      * Set the product reference number to bill the account.
      *
-     * @param int $reference
+     * @param string $reference
      *
      * @return $this
      */
-    public function usingReference($reference): self
+    public function usingReference(string $reference): self
     {
         $this->reference = $reference;
         return $this;
@@ -75,7 +72,7 @@ class Simulate extends ApiCore
      */
     public function setCommand(?string $command): self
     {
-        $this->command = $command ?? config('drh.mpesa.c2b.transaction_type');
+        $this->command = $command ?? config('drh.mpesa.c2b.transaction_type') ?? "CustomerPayBillOnline";
         return $this;
     }
 
@@ -87,13 +84,18 @@ class Simulate extends ApiCore
      * @param string|null $reference
      * @param string|null $command
      * @return mixed
-     * @throws MpesaException
-     * @throws GuzzleException
+     * @throws ExternalServiceException
+     * @throws GuzzleException|\DrH\Mpesa\Exceptions\ClientException
      */
-    public function push(string $number = null, int $amount = null, string $reference = null, string $command = null)
+    public function push(
+        string $number = null,
+        int    $amount = null,
+        string $reference = null,
+        string $command = null
+    ): array
     {
         if (!config('drh.mpesa.sandbox', true)) {
-            throw new MpesaException('Cannot simulate a transaction in the live environment.');
+            throw new \DrH\Mpesa\Exceptions\ClientException('Cannot simulate a transaction in the live environment.');
         }
         $shortCode = config('drh.mpesa.c2b.short_code');
         $good_phone = $this->formatPhoneNumber($number ?: $this->number);
@@ -107,7 +109,7 @@ class Simulate extends ApiCore
         try {
             return $this->sendRequest($body, 'simulate');
         } catch (ClientException $exception) {
-            return json_decode($exception->getResponse()->getBody());
+            return json_decode($exception->getResponse()->getBody(), true);
         }
     }
 }

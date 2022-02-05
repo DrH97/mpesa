@@ -5,7 +5,8 @@ namespace DrH\Mpesa\Library;
 use Carbon\Carbon;
 use DrH\Mpesa\Entities\MpesaStkRequest;
 use DrH\Mpesa\Events\StkPushRequestedEvent;
-use DrH\Mpesa\Exceptions\MpesaException;
+use DrH\Mpesa\Exceptions\ClientException;
+use DrH\Mpesa\Exceptions\ExternalServiceException;
 use DrH\Mpesa\Repositories\Generator;
 use Exception;
 use GuzzleHttp\Exception\GuzzleException;
@@ -53,14 +54,13 @@ class StkPush extends ApiCore
      * @param string $reference
      * @param string $description
      * @return $this
-     * @throws Exception
-     * @throws MpesaException
+     * @throws ClientException
      */
     public function usingReference(string $reference, string $description): self
     {
         preg_match('/[^A-Za-z0-9]/', $reference, $matches);
         if (count($matches)) {
-            throw new MpesaException('Reference should be alphanumeric.');
+            throw new ClientException('Reference should be alphanumeric.');
         }
         $this->reference = $reference;
         $this->description = $description;
@@ -76,9 +76,8 @@ class StkPush extends ApiCore
      * @param string|null $description
      * @param MpesaAccount|null $account
      * @return MpesaStkRequest
-     * @throws MpesaException
+     * @throws ExternalServiceException|ClientException
      * @throws GuzzleException
-     * @throws Exception
      */
     public function push(
         int          $amount = null,
@@ -92,13 +91,14 @@ class StkPush extends ApiCore
 
         if (config('drh.mpesa.multi_tenancy', false) && ($account && !$account->sandbox)) {
             if ($account->passkey == null || $account->shortcode == null) {
-                throw new MpesaException("Multi Tenancy is enabled but Mpesa Account is null.");
+                throw new ClientException("Multi Tenancy is enabled but Mpesa Account is null.");
             }
 
             $shortCode = $account->shortcode;
             $passkey = $account->passkey;
 
-            $transactionType = $account->type == "TILL" ? "CustomerBuyGoodsOnline" : "CustomerPayBillOnline";
+            $transactionType = $account->type == MpesaAccount::TILL
+                ? "CustomerBuyGoodsOnline" : "CustomerPayBillOnline";
         } else {
             $shortCode = config('drh.mpesa.c2b.short_code');
             $passkey = config('drh.mpesa.c2b.passkey');
@@ -132,7 +132,7 @@ class StkPush extends ApiCore
             $response = $this->sendRequest($body, 'stk_push');
         }
 
-        return $this->saveStkRequest($body, (array)$response);
+        return $this->saveStkRequest($body, $response);
     }
 
     /**
@@ -140,9 +140,9 @@ class StkPush extends ApiCore
      * @param array $response
      * @return MpesaStkRequest
      * @throws Exception
-     * @throws MpesaException
+     * @throws ExternalServiceException
      */
-    private function saveStkRequest($body, $response): MpesaStkRequest
+    private function saveStkRequest(array $body, array $response): MpesaStkRequest
     {
         if ($response['ResponseCode'] == 0) {
             $incoming = [
@@ -158,7 +158,7 @@ class StkPush extends ApiCore
             event(new StkPushRequestedEvent($stk, request()));
             return $stk;
         }
-        throw new MpesaException($response['ResponseDescription']);
+        throw new ExternalServiceException($response['ResponseDescription']);
     }
 
     /**
@@ -167,7 +167,7 @@ class StkPush extends ApiCore
      * @param int $stkRequestId
      * @return array
      * @throws GuzzleException
-     * @throws MpesaException
+     * @throws ExternalServiceException|ClientException
      */
     public function status(int $stkRequestId): array
     {
@@ -186,7 +186,7 @@ class StkPush extends ApiCore
         try {
             return $this->sendRequest($body, 'stk_status');
         } catch (RequestException $exception) {
-            throw new MpesaException($exception->getMessage());
+            throw new ExternalServiceException($exception->getMessage());
         }
     }
 }

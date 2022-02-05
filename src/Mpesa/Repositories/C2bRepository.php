@@ -2,7 +2,7 @@
 
 namespace DrH\Mpesa\Repositories;
 
-use DrH\Mpesa\Exceptions\MpesaException;
+use DrH\Mpesa\Exceptions\ExternalServiceException;
 use DrH\Mpesa\Library\C2bRegister;
 use Exception;
 use GuzzleHttp\Exception\GuzzleException;
@@ -20,7 +20,7 @@ class C2bRepository
 
     /**
      * @return mixed
-     * @throws MpesaException
+     * @throws ExternalServiceException
      * @throws Exception
      * @throws GuzzleException
      */

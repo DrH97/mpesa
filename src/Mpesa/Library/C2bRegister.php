@@ -2,7 +2,7 @@
 
 namespace DrH\Mpesa\Library;
 
-use DrH\Mpesa\Exceptions\MpesaException;
+use DrH\Mpesa\Exceptions\ClientException;
 use Exception;
 use GuzzleHttp\Exception\GuzzleException;
 
@@ -39,12 +39,12 @@ class C2bRegister extends ApiCore
      * @param string $onTimeout
      * @return $this
      * @throws Exception
-     * @throws MpesaException
+     * @throws ClientException
      */
     public function onTimeout(string $onTimeout = 'Cancelled'): self
     {
         if ($onTimeout !== 'Completed' && $onTimeout !== 'Cancelled') {
-            throw new MpesaException('Invalid timeout argument. Use Completed or Cancelled');
+            throw new ClientException('Invalid timeout argument. Use Completed or Cancelled');
         }
         $this->onTimeout = $onTimeout;
         return $this;
@@ -56,7 +56,7 @@ class C2bRegister extends ApiCore
      * @param string|null $validationURL
      * @param string|null $onTimeout
      * @return array
-     * @throws MpesaException
+     * @throws ClientException
      * @throws Exception
      * @throws GuzzleException
      */
@@ -68,7 +68,7 @@ class C2bRegister extends ApiCore
     ): array
     {
         if ($onTimeout && $onTimeout !== 'Completed' && $onTimeout !== 'Cancelled') {
-            throw new MpesaException('Invalid timeout argument. Use Completed or Cancelled');
+            throw new ClientException('Invalid timeout argument. Use Completed or Cancelled');
         }
         $body = [
             'ShortCode' => $shortCode ?: $this->shortCode,

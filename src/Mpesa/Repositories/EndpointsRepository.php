@@ -2,7 +2,7 @@
 
 namespace DrH\Mpesa\Repositories;
 
-use DrH\Mpesa\Exceptions\MpesaException;
+use DrH\Mpesa\Exceptions\ClientException;
 use DrH\Mpesa\Library\MpesaAccount;
 
 class EndpointsRepository
@@ -11,7 +11,7 @@ class EndpointsRepository
      * @param string $section
      * @param MpesaAccount|null $account
      * @return string
-     * @throws MpesaException
+     * @throws ClientException
      */
     private static function getEndpoint(string $section, MpesaAccount $account = null): string
     {
@@ -30,7 +30,7 @@ class EndpointsRepository
         if ($item = $list[$section]) {
             return self::getUrl($item, $account);
         }
-        throw new MpesaException('Unknown endpoint');
+        throw new ClientException('Unknown endpoint');
     }
 
     /**
@@ -51,7 +51,7 @@ class EndpointsRepository
      * @param string $endpoint
      * @param MpesaAccount|null $account
      * @return string
-     * @throws MpesaException
+     * @throws ClientException
      */
     public static function build(string $endpoint, MpesaAccount $account = null): string
     {

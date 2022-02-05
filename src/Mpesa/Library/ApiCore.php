@@ -2,7 +2,7 @@
 
 namespace DrH\Mpesa\Library;
 
-use DrH\Mpesa\Exceptions\MpesaException;
+use DrH\Mpesa\Exceptions\ExternalServiceException;
 use DrH\Mpesa\Repositories\EndpointsRepository;
 use DrH\Mpesa\Repositories\MpesaRepository;
 use GuzzleHttp\Exception\ClientException;
@@ -11,6 +11,8 @@ use GuzzleHttp\Exception\GuzzleException;
 use GuzzleHttp\Exception\ServerException;
 use Illuminate\Support\Str;
 use Psr\Http\Message\ResponseInterface;
+use function config;
+use function strlen;
 
 class ApiCore
 {
@@ -35,13 +37,13 @@ class ApiCore
      * @param bool $strip_plus
      * @return string
      */
-    protected function formatPhoneNumber(string $number, bool $strip_plus = true): string
+    public function formatPhoneNumber(string $number, bool $strip_plus = true): string
     {
         $number = preg_replace('/\s+/', '', $number);
         $replace = static function ($needle, $replacement) use (&$number) {
             if (Str::startsWith($number, $needle)) {
                 $pos = strpos($number, $needle);
-                $length = \strlen($needle);
+                $length = strlen($needle);
                 $number = substr_replace($number, $replacement, $pos, $length);
             }
         };
@@ -49,6 +51,8 @@ class ApiCore
         $replace('07', '+2547');
         $replace('2541', '+2541');
         $replace('01', '+2541');
+        $replace('7', '+2547');
+        $replace('1', '+2541');
         if ($strip_plus) {
             $replace('+254', '254');
         }
@@ -61,11 +65,12 @@ class ApiCore
      * @param MpesaAccount|null $account
      * @return ResponseInterface
      * @throws GuzzleException
-     * @throws MpesaException
+     * @throws ExternalServiceException
+     * @throws \DrH\Mpesa\Exceptions\ClientException
      */
     private function makeRequest(array $body, string $endpoint, MpesaAccount $account = null): ResponseInterface
     {
-        if (\config('drh.mpesa.multi_tenancy', false)) {
+        if (config('drh.mpesa.multi_tenancy', false)) {
             $this->bearer = $this->engine->auth->authenticate($this->bulk, $account);
         } else {
             $this->bearer = $this->engine->auth->authenticate($this->bulk);
@@ -90,7 +95,7 @@ class ApiCore
      * @param MpesaAccount|null $account
      * @return array
      * @throws GuzzleException
-     * @throws MpesaException
+     * @throws ExternalServiceException|\DrH\Mpesa\Exceptions\ClientException
      */
     public function sendRequest(array $body, string $endpoint, MpesaAccount $account = null): array
     {
@@ -110,16 +115,17 @@ class ApiCore
                 sleep(1);
                 return $this->sendRequest($body, $endpoint, $account);
             }
-            throw new MpesaException('Mpesa Server Error');
+            throw new ExternalServiceException('Mpesa Server Error');
         }
     }
 
     /**
      * @param ClientException|ServerException $exception
-     * @return MpesaException
+     * @return ExternalServiceException
      */
-    private function generateException(ClientException|ServerException $exception): MpesaException
+    private function generateException(ClientException|ServerException $exception): ExternalServiceException
     {
-        return new MpesaException($exception->getResponse()->getBody());
+        mpesaLogError($exception);
+        return new ExternalServiceException($exception->getResponse()->getBody());
     }
 }

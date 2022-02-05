@@ -4,6 +4,9 @@ namespace DrH\Mpesa\Library;
 
 class MpesaAccount
 {
+    const TILL = "TILL";
+    const PAYBILL = "PAYBILL";
+
     /**
      * MpesaAccount constructor.
      *
@@ -20,8 +23,8 @@ class MpesaAccount
         public string $key,
         public string $secret,
         public string $passkey,
-        public bool $sandbox = false,
-        public string $type = 'PAYBILL',
+        public bool   $sandbox = false,
+        public string $type = self::PAYBILL,
     ) {
     }
 }

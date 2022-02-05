@@ -3,7 +3,8 @@
 namespace DrH\Mpesa\Library;
 
 use DrH\Mpesa\Entities\MpesaBulkPaymentRequest;
-use DrH\Mpesa\Exceptions\MpesaException;
+use DrH\Mpesa\Exceptions\ClientException;
+use DrH\Mpesa\Exceptions\ExternalServiceException;
 use Exception;
 use GuzzleHttp\Exception\GuzzleException;
 use function config;
@@ -51,8 +52,8 @@ class BulkSender extends ApiCore
      * @param int|null $amount
      * @param string|null $remarks
      * @return MpesaBulkPaymentRequest
-     * @throws MpesaException
-     * @throws GuzzleException
+     * @throws ExternalServiceException
+     * @throws GuzzleException|ClientException
      */
     public function send(string $number = null, int $amount = null, string $remarks = null): MpesaBulkPaymentRequest
     {
@@ -75,12 +76,12 @@ class BulkSender extends ApiCore
     }
 
     /**
-     * @return mixed
-     * @throws MpesaException
+     * @return array
+     * @throws ExternalServiceException
      * @throws Exception
      * @throws GuzzleException
      */
-    public function balance(): mixed
+    public function balance(): array
     {
         $body = [
             'CommandID' => 'AccountBalance',

@@ -2,7 +2,7 @@
 
 namespace DrH\Mpesa\Library;
 
-use DrH\Mpesa\Exceptions\MpesaException;
+use DrH\Mpesa\Exceptions\ClientException;
 use GuzzleHttp\ClientInterface;
 
 class Core
@@ -13,7 +13,7 @@ class Core
      * Core constructor.
      *
      * @param ClientInterface $client
-     * @throws MpesaException
+     * @throws ClientException
      */
     public function __construct(public ClientInterface $client)
     {

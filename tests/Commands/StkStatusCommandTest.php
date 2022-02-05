@@ -5,7 +5,6 @@ namespace DrH\Mpesa\Tests\Commands;
 use DrH\Mpesa\Entities\MpesaStkCallback;
 use DrH\Mpesa\Entities\MpesaStkRequest;
 use DrH\Mpesa\Tests\MockServerTestCase;
-use GuzzleHttp\Psr7\Response;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 class StkStatusCommandTest extends MockServerTestCase
@@ -23,20 +22,9 @@ class StkStatusCommandTest extends MockServerTestCase
     /** @test */
     function the_command_logs_failed_queries()
     {
-        $this->mock->append(
-            new Response(
-                200,
-                ['Content_type' => 'application/json'],
-                json_encode($this->mockResponses['auth']['success'])
-            )
-        );
-        $this->mock->append(
-            new Response(
-                400,
-                ['Content_type' => 'application/json'],
-                json_encode($this->mockResponses['stk']['query']['error'])
-            )
-        );
+        $this->addMock($this->mockResponses['auth']['success']);
+        $this->addMock($this->mockResponses['stk']['query']['error'], 400);
+
 
         MpesaStkRequest::create([
             'phone' => "070000000",
@@ -55,20 +43,9 @@ class StkStatusCommandTest extends MockServerTestCase
     /** @test */
     function the_command_logs_successful_queries()
     {
-        $this->mock->append(
-            new Response(
-                200,
-                ['Content_type' => 'application/json'],
-                json_encode($this->mockResponses['auth']['success'])
-            )
-        );
-        $this->mock->append(
-            new Response(
-                200,
-                ['Content_type' => 'application/json'],
-                json_encode($this->mockResponses['stk']['query']['success'])
-            )
-        );
+        $this->addMock($this->mockResponses['auth']['success']);
+        $this->addMock($this->mockResponses['stk']['query']['success']);
+
 
         MpesaStkRequest::create([
             'phone' => "070000000",

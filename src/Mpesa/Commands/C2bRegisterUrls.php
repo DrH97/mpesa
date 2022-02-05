@@ -2,7 +2,7 @@
 
 namespace DrH\Mpesa\Commands;
 
-use DrH\Mpesa\Exceptions\MpesaException;
+use DrH\Mpesa\Exceptions\ExternalServiceException;
 use DrH\Mpesa\Library\C2bRegister;
 use GuzzleHttp\Exception\GuzzleException;
 use Illuminate\Console\Command;
@@ -40,7 +40,7 @@ class C2bRegisterUrls extends Command
      *
      * @return void
      * @throws GuzzleException
-     * @throws MpesaException
+     * @throws ExternalServiceException
      */
     public function handle(): void
     {

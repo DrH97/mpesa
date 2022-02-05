@@ -2,6 +2,9 @@
 
 namespace DrH\Mpesa\Exceptions;
 
-class MpesaException extends \Exception
+use Exception;
+
+class MpesaException extends Exception
 {
+    protected $code = 500;
 }
