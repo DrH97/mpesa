@@ -15,6 +15,7 @@ use DrH\Mpesa\Events\StkPushPaymentSuccessEvent;
 use Exception;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Str;
 use JetBrains\PhpStorm\ArrayShape;
 
 class MpesaRepository
@@ -36,7 +37,11 @@ class MpesaRepository
         if ($data->ResultCode == 0) {
             $_payload = $data->CallbackMetadata->Item;
             foreach ($_payload as $callback) {
-                $real_data[$callback->Name] = @$callback->Value;
+                if ($callback->Name == "PhoneNumber") {
+                    $real_data['phone'] = @$callback->Value;
+                } else {
+                    $real_data[Str::snake($callback->Name)] = @$callback->Value;
+                }
             }
             $callback = MpesaStkCallback::create($real_data);
         } else {
