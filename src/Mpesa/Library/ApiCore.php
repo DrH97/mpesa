@@ -5,10 +5,9 @@ namespace DrH\Mpesa\Library;
 use DrH\Mpesa\Exceptions\ExternalServiceException;
 use DrH\Mpesa\Repositories\EndpointsRepository;
 use DrH\Mpesa\Repositories\MpesaRepository;
-use GuzzleHttp\Exception\ClientException;
 use GuzzleHttp\Exception\ConnectException;
 use GuzzleHttp\Exception\GuzzleException;
-use GuzzleHttp\Exception\ServerException;
+use GuzzleHttp\Exception\RequestException;
 use Illuminate\Support\Str;
 use Psr\Http\Message\ResponseInterface;
 use function config;
@@ -20,7 +19,9 @@ class ApiCore
 
     public string $bearer;
 
-    private int $trials = 3;
+    private int $retries;
+
+    private int $retryWaitTime;
 
     /**
      * ApiCore constructor.
@@ -30,6 +31,8 @@ class ApiCore
      */
     public function __construct(private Core $engine, protected MpesaRepository $mpesaRepository)
     {
+        $this->retries = config("drh.mpesa.retries", 0);
+        $this->retryWaitTime = config("drh.mpesa.retry_wait_time", 3);
     }
 
     /**
@@ -99,20 +102,21 @@ class ApiCore
      */
     public function sendRequest(array $body, string $endpoint, MpesaAccount $account = null): array
     {
-        $endpoint = EndpointsRepository::build($endpoint, $account);
+        $url = EndpointsRepository::build($endpoint, $account);
         try {
-            $response = $this->makeRequest($body, $endpoint, $account);
+            $response = $this->makeRequest($body, $url, $account);
             $_body = json_decode($response->getBody(), true);
 
             return (array)$_body;
-        } catch (ClientException|ServerException $exception) {
+        } catch (RequestException $exception) {
             throw $this->generateException($exception);
         } catch (ConnectException $exception) {
-            mpesaLogError($exception);
-            mpesaLogInfo($this->trials . " trials left.");
-            if ($this->trials > 0) {
-                $this->trials--;
-                sleep(1);
+            mpesaLogError($exception->getMessage());
+            if ($this->retries > 0) {
+                mpesaLogInfo($this->retries . " trials left.");
+
+                $this->retries--;
+                sleep($this->retryWaitTime);
                 return $this->sendRequest($body, $endpoint, $account);
             }
             throw new ExternalServiceException('Mpesa Server Error');
@@ -120,12 +124,12 @@ class ApiCore
     }
 
     /**
-     * @param ClientException|ServerException $exception
+     * @param RequestException $exception
      * @return ExternalServiceException
      */
-    private function generateException(ClientException|ServerException $exception): ExternalServiceException
+    private function generateException(RequestException $exception): ExternalServiceException
     {
-        mpesaLogError($exception);
+        mpesaLogError($exception->getMessage());
         return new ExternalServiceException($exception->getResponse()->getBody());
     }
 }

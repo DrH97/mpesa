@@ -7,7 +7,7 @@ use DrH\Mpesa\Exceptions\ExternalServiceException;
 use DrH\Mpesa\Repositories\EndpointsRepository;
 use GuzzleHttp\Exception\ConnectException;
 use GuzzleHttp\Exception\GuzzleException;
-use GuzzleHttp\Exception\ServerException;
+use GuzzleHttp\Exception\RequestException;
 use Illuminate\Support\Facades\Cache;
 use Psr\Http\Message\ResponseInterface;
 use function base64_encode;
@@ -23,7 +23,9 @@ class Authenticator
 
     private string $credentials;
 
-    private int $trials = 3;
+    private int $retries;
+
+    private int $retryWaitTime;
 
     /**
      * Authenticator constructor.
@@ -34,6 +36,8 @@ class Authenticator
     public function __construct(protected Core $engine)
     {
         $this->endpoint = EndpointsRepository::build('auth');
+        $this->retries = config("drh.mpesa.retries", 0);
+        $this->retryWaitTime = config("drh.mpesa.retry_wait_time", 3);
     }
 
     /**
@@ -57,15 +61,15 @@ class Authenticator
             $body = json_decode($response->getBody());
             $this->saveCredentials($body);
             return $body->access_token;
-        } catch (\GuzzleHttp\Exception\ClientException|ServerException $exception) {
-            mpesaLogError($exception->getMessage());
+        } catch (RequestException $exception) {
             throw $this->generateException($exception);
         } catch (ConnectException $exception) {
             mpesaLogError($exception->getMessage());
-            mpesaLogInfo($this->trials . " auth trials left.");
-            if ($this->trials > 0) {
-                $this->trials--;
-                sleep(.2);
+            if ($this->retries > 0) {
+                mpesaLogInfo($this->retries . " auth trials left.");
+
+                $this->retries--;
+                sleep($this->retryWaitTime);
                 return $this->authenticate($bulk, $account);
             }
             throw new ExternalServiceException('Mpesa Server Auth Error');
@@ -79,7 +83,7 @@ class Authenticator
     private function generateException(string $reason): ClientException
     {
         return match (strtolower($reason)) {
-            'bad request: invalid credentials' =>
+            'bad request - invalid credentials' =>
             new ClientException('Invalid consumer key and secret combination'),
             default => new ClientException($reason),
         };

@@ -30,6 +30,21 @@ return [
    |
    */
     'cache_credentials' => true,
+
+    /*
+  |--------------------------------------------------------------------------
+  | Retry Requests on Failure
+  |--------------------------------------------------------------------------
+  |
+  | If you decide to retry requests, they will be retried only
+  | if there was a connection failure/exception
+  | Retry wait time is the time between failure and request retry in seconds
+  | Set retries to 0(Zero) to skip retrying
+  |
+  */
+    'retries' => 2,
+    'retry_wait_time' => 1,
+
     /*
    |--------------------------------------------------------------------------
    | C2B array

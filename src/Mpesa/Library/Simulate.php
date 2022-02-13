@@ -10,7 +10,6 @@ use function json_decode;
 
 class Simulate extends ApiCore
 {
-
     private int $amount;
 
     private string $number;
