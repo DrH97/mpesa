@@ -13,7 +13,10 @@ use Illuminate\Queue\SerializesModels;
  */
 class StkPushPaymentFailedEvent
 {
-    use Dispatchable, InteractsWithSockets, SerializesModels;
+    use Dispatchable;
+    use InteractsWithSockets;
+    use SerializesModels;
+
     /**
      * @var MpesaStkCallback
      */

@@ -12,7 +12,6 @@ use DrH\Mpesa\Library\MpesaAccount;
  */
 class EndpointsRepository
 {
-
     /**
      * @param string $section
      * @return string

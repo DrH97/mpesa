@@ -1,13 +1,11 @@
 <?php
 
-
 namespace DrH\Mpesa\Commands;
 
 use DrH\Mpesa\Exceptions\MpesaException;
 use DrH\Mpesa\Library\C2bRegister;
 use GuzzleHttp\Exception\GuzzleException;
 use Illuminate\Console\Command;
-use Illuminate\Support\Facades\Log;
 use JetBrains\PhpStorm\NoReturn;
 use function config;
 
@@ -48,7 +46,7 @@ class C2bRegisterUrls extends Command
     #[NoReturn]
     public function handle(): void
     {
-        Log::info($this->description);
+        mpesaLogInfo($this->description);
 
         $response = $this->c2bRegister
             ->shortcode($this->askShortcode())
@@ -56,12 +54,14 @@ class C2bRegisterUrls extends Command
             ->onValidation($this->askValidationUrl())
             ->submit();
 
-        Log::info($response);
+        $this->info("Logging response");
+
+        mpesaLogInfo(array($response));
     }
 
     private function askShortcode(): int
     {
-        return $this->ask('What is your shortcode', config('drh.mpesa.c2b.short_code'));
+        return $this->ask('What is your shortcode?', config('drh.mpesa.c2b.short_code'));
     }
 
     private function askConfirmationUrl(): string

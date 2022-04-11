@@ -3,7 +3,7 @@
 namespace DrH\Tests\Unit;
 
 use DrH\Mpesa\Database\Entities\MpesaStkRequest;
-use DrH\Tests\TestCase;
+use DrH\Mpesa\Tests\TestCase;
 use Illuminate\Database\Eloquent\Model;
 
 class MigrationTest extends TestCase

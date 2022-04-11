@@ -13,7 +13,10 @@ use Illuminate\Queue\SerializesModels;
  */
 class C2bConfirmationEvent
 {
-    use Dispatchable, InteractsWithSockets, SerializesModels;
+    use Dispatchable;
+    use InteractsWithSockets;
+    use SerializesModels;
+
     /**
      * @var MpesaC2bCallback
      */

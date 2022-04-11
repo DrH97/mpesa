@@ -1,6 +1,5 @@
 <?php
 
-
 namespace DrH\Mpesa\Listeners;
 
 use DrH\Mpesa\Events\B2cPaymentSuccessEvent;

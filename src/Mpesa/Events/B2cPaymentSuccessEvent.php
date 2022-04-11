@@ -13,7 +13,10 @@ use Illuminate\Queue\SerializesModels;
  */
 class B2cPaymentSuccessEvent
 {
-    use Dispatchable, InteractsWithSockets, SerializesModels;
+    use Dispatchable;
+    use InteractsWithSockets;
+    use SerializesModels;
+
     /**
      * @var MpesaBulkPaymentResponse
      */

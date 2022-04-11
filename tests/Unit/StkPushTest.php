@@ -4,7 +4,7 @@ namespace DrH\Tests\Unit;
 
 use DrH\Mpesa\Exceptions\MpesaException;
 use DrH\Mpesa\Library\MpesaAccount;
-use DrH\Tests\TestCase;
+use DrH\Mpesa\Tests\TestCase;
 
 class StkPushTest extends TestCase
 {

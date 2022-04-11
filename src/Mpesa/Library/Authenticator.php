@@ -2,6 +2,7 @@
 
 namespace DrH\Mpesa\Library;
 
+use DrH\Mpesa\Exceptions\ClientException;
 use DrH\Mpesa\Exceptions\MpesaException;
 use DrH\Mpesa\Repositories\EndpointsRepository;
 use GuzzleHttp\Exception\GuzzleException;
@@ -20,7 +21,6 @@ use function strtolower;
  */
 class Authenticator
 {
-
     /**
      * @var string
      */
@@ -58,7 +58,7 @@ class Authenticator
     /**
      * @param bool $bulk
      * @return string
-     * @throws MpesaException
+     * @throws ClientException
      * @throws GuzzleException
      */
     public function authenticate($bulk = false, MpesaAccount $account = null): ?string
@@ -77,7 +77,7 @@ class Authenticator
                 $this->saveCredentials($body);
                 return $body->access_token;
             }
-            throw new MpesaException($response->getReasonPhrase());
+            throw new ClientException($response->getReasonPhrase());
         } catch (RequestException $exception) {
             $message = $exception->getResponse() ?
                 $exception->getResponse()->getReasonPhrase() :
@@ -89,15 +89,15 @@ class Authenticator
 
     /**
      * @param $reason
-     * @return MpesaException
+     * @return ClientException
      */
-    private function generateException($reason): ?MpesaException
+    private function generateException($reason): ClientException
     {
         switch (strtolower($reason)) {
             case 'bad request: invalid credentials':
-                return new MpesaException('Invalid consumer key and secret combination');
+                return new ClientException('Invalid consumer key and secret combination');
             default:
-                return new MpesaException($reason);
+                return new ClientException($reason);
         }
     }
 

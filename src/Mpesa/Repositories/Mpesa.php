@@ -2,7 +2,6 @@
 
 namespace DrH\Mpesa\Repositories;
 
-use Illuminate\Support\Arr;
 use DrH\Mpesa\Database\Entities\MpesaBulkPaymentRequest;
 use DrH\Mpesa\Database\Entities\MpesaBulkPaymentResponse;
 use DrH\Mpesa\Database\Entities\MpesaC2bCallback;
@@ -13,6 +12,7 @@ use DrH\Mpesa\Events\B2cPaymentSuccessEvent;
 use DrH\Mpesa\Events\C2bConfirmationEvent;
 use DrH\Mpesa\Events\StkPushPaymentFailedEvent;
 use DrH\Mpesa\Events\StkPushPaymentSuccessEvent;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Auth;
 
 /**
@@ -139,7 +139,7 @@ class Mpesa
         $success = $errors = [];
         foreach ($stk as $item) {
             try {
-                $status = mpesa_stk_status($item->id);
+                $status = (object)mpesa_stk_status($item->id);
                 if (isset($status->errorMessage)) {
                     $errors[$item->CheckoutRequestID] = $status->errorMessage;
                     continue;
@@ -151,7 +151,7 @@ class Mpesa
                     'ResultDesc' => $status->ResultDesc,
                     'Amount' => $item->amount,
                 ];
-                $errors[$item->CheckoutRequestID] = $status->ResultDesc;
+                $success[$item->CheckoutRequestID] = $status->ResultDesc;
                 $callback = MpesaStkCallback::create($attributes);
                 $this->fireStkEvent($callback, get_object_vars($status));
             } catch (\Exception $e) {

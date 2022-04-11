@@ -105,7 +105,6 @@ class StkPush extends ApiCore
             $passkey = $account->passkey;
 
             $transactionType = $account->type == "TILL" ? "CustomerBuyGoodsOnline" : "CustomerPayBillOnline";
-
         } else {
             $shortCode = \config('drh.mpesa.c2b.short_code');
             $passkey = \config('drh.mpesa.c2b.passkey');

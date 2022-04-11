@@ -46,8 +46,25 @@ class StkStatus extends Command
      */
     public function handle()
     {
+        mpesaLogInfo($this->description);
+
         $results = $this->mpesa->queryStkStatus();
-//        TODO: Handle this in a better/smoother manner
-        dd($results);
+
+        /** @var array $results */
+        if (count($results['successful'])) {
+            $this->info("Logging successful queries");
+
+            mpesaLogInfo($results['successful']);
+        }
+
+        if (count($results['errors'])) {
+            $this->info("Logging failed queries");
+
+            mpesaLogError($results['errors']);
+        }
+
+        if (empty($results['successful']) && empty($results['errors'])) {
+            $this->comment("Nothing to query... all transactions seem to be ok.");
+        }
     }
 }

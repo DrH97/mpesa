@@ -2,12 +2,18 @@
 
 namespace DrH\Mpesa\Library;
 
+use DrH\Mpesa\Exceptions\ExternalServiceException;
 use DrH\Mpesa\Exceptions\MpesaException;
 use DrH\Mpesa\Repositories\EndpointsRepository;
 use DrH\Mpesa\Repositories\Mpesa;
+use Exception;
 use GuzzleHttp\Exception\ClientException;
+use GuzzleHttp\Exception\ConnectException;
+use GuzzleHttp\Exception\GuzzleException;
 use Illuminate\Support\Str;
+use Psr\Http\Message\ResponseInterface;
 use function config;
+use function json_decode;
 use function strlen;
 
 class ApiCore
@@ -47,7 +53,7 @@ class ApiCore
      * @param bool $strip_plus
      * @return string
      */
-    protected function formatPhoneNumber($number, $strip_plus = true): string
+    public function formatPhoneNumber($number, $strip_plus = true): string
     {
         $number = preg_replace('/\s+/', '', $number);
         $replace = static function ($needle, $replacement) use (&$number) {
@@ -72,10 +78,10 @@ class ApiCore
     /**
      * @param array $body
      * @param string $endpoint
-     * @return \Psr\Http\Message\ResponseInterface
-     * @throws \DrH\Mpesa\Exceptions\MpesaException
-     * @throws \Exception
-     * @throws \GuzzleHttp\Exception\GuzzleException
+     * @return ResponseInterface
+     * @throws MpesaException
+     * @throws Exception
+     * @throws GuzzleException
      */
     private function makeRequest($body, $endpoint, MpesaAccount $account = null)
     {
@@ -101,32 +107,35 @@ class ApiCore
     /**
      * @param array $body
      * @param string $endpoint
-     * @return mixed
-     * @throws MpesaException
-     * @throws \GuzzleHttp\Exception\GuzzleException
+     * @return array
+     * @throws GuzzleException
+     * @throws ExternalServiceException|\DrH\Mpesa\Exceptions\ClientException
      */
     public function sendRequest($body, $endpoint, MpesaAccount $account = null)
     {
         $endpoint = EndpointsRepository::build($endpoint, $account);
         try {
             $response = $this->makeRequest($body, $endpoint, $account);
-            $_body = \json_decode($response->getBody());
+            $_body = json_decode($response->getBody());
             if ($response->getStatusCode() !== 200) {
-                throw new MpesaException($_body->errorMessage ?
+                throw new \DrH\Mpesa\Exceptions\ClientException($_body->errorMessage ?
                     $_body->errorCode . ' - ' . $_body->errorMessage : $response->getBody());
             }
-            return $_body;
+            return (array)$_body;
         } catch (ClientException $exception) {
             throw $this->generateException($exception);
+        } catch (ConnectException $exception) {
+            throw new ExternalServiceException('Mpesa Server Error');
         }
     }
 
     /**
      * @param ClientException $exception
-     * @return MpesaException
+     * @return \DrH\Mpesa\Exceptions\ClientException
      */
-    private function generateException(ClientException $exception): MpesaException
+    private function generateException(ClientException $exception): \DrH\Mpesa\Exceptions\ClientException
     {
-        return new MpesaException($exception->getResponse()->getBody());
+        mpesaLogError($exception->getMessage());
+        return new \DrH\Mpesa\Exceptions\ClientException($exception->getResponse()->getBody());
     }
 }
