@@ -3,6 +3,7 @@
 namespace DrH\Mpesa;
 
 //use DrH\Mpesa\Commands\Registra;
+use DrH\Mpesa\Commands\C2bRegisterUrls;
 use DrH\Mpesa\Commands\StkStatus;
 use DrH\Mpesa\Events\B2cPaymentFailedEvent;
 use DrH\Mpesa\Events\B2cPaymentSuccessEvent;
@@ -44,7 +45,7 @@ class MpesaServiceProvider extends ServiceProvider
         });
         $this->commands(
             [
-            //                Registra::class,
+                C2bRegisterUrls::class,
                 StkStatus::class,
             ]
         );
