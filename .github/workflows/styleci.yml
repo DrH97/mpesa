@@ -11,10 +11,9 @@ jobs:
     strategy:
       matrix:
         operating-system: [ ubuntu-latest ]
-        php-versions: [ '7.4', '8.0' ]
-        laravel: [ '7', '8', '9' ]
+        php-versions: [ '7.4' ]
 
-    name: P${{ matrix.php-versions }} - L${{ matrix.laravel }} - ${{ matrix.dependency-stability }} - ${{ matrix.operating-system}}
+    name: P${{ matrix.php-versions }} - ${{ matrix.dependency-stability }} - ${{ matrix.operating-system}}
 
     steps:
       - uses: actions/checkout@v2
