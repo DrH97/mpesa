@@ -11,6 +11,7 @@ use DrH\Mpesa\Events\StkPushPaymentFailedEvent;
 use DrH\Mpesa\Events\StkPushPaymentSuccessEvent;
 use DrH\Mpesa\Http\Middlewares\MpesaCors;
 use DrH\Mpesa\Library\BulkSender;
+use DrH\Mpesa\Library\C2bRegister;
 use DrH\Mpesa\Library\Core;
 use DrH\Mpesa\Library\IdCheck;
 use DrH\Mpesa\Library\StkPush;
@@ -78,7 +79,7 @@ class MpesaServiceProvider extends ServiceProvider
         $this->app->bind(
             'mpesa_registrar',
             function () {
-                return $this->app->make(RegisterUrl::class);
+                return $this->app->make(C2bRegister::class);
             }
         );
         $this->app->bind(
