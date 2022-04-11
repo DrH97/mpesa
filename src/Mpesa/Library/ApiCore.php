@@ -2,9 +2,10 @@
 
 namespace DrH\Mpesa\Library;
 
-use DrH\Mpesa\Exceptions\ExternalServiceException;
+use DrH\Mpesa\Exceptions\MpesaException;
 use DrH\Mpesa\Repositories\EndpointsRepository;
-use DrH\Mpesa\Repositories\MpesaRepository;
+use DrH\Mpesa\Repositories\Mpesa;
+use GuzzleHttp\Exception\ClientException;
 use Illuminate\Support\Str;
 use function config;
 use function strlen;
@@ -111,7 +112,8 @@ class ApiCore
             $response = $this->makeRequest($body, $endpoint, $account);
             $_body = \json_decode($response->getBody());
             if ($response->getStatusCode() !== 200) {
-                throw new MpesaException($_body->errorMessage ? $_body->errorCode . ' - ' . $_body->errorMessage : $response->getBody());
+                throw new MpesaException($_body->errorMessage ?
+                    $_body->errorCode . ' - ' . $_body->errorMessage : $response->getBody());
             }
             return $_body;
         } catch (ClientException $exception) {
