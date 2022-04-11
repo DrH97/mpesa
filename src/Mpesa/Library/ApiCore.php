@@ -2,17 +2,13 @@
 
 namespace DrH\Mpesa\Library;
 
-use DrH\Mpesa\Exceptions\MpesaException;
+use DrH\Mpesa\Exceptions\ExternalServiceException;
 use DrH\Mpesa\Repositories\EndpointsRepository;
-use DrH\Mpesa\Repositories\Mpesa;
-use GuzzleHttp\Exception\ClientException;
+use DrH\Mpesa\Repositories\MpesaRepository;
 use Illuminate\Support\Str;
+use function config;
+use function strlen;
 
-/**
- * Class ApiCore
- *
- * @package DrH\Mpesa\Library
- */
 class ApiCore
 {
     /**
@@ -56,7 +52,7 @@ class ApiCore
         $replace = static function ($needle, $replacement) use (&$number) {
             if (Str::startsWith($number, $needle)) {
                 $pos = strpos($number, $needle);
-                $length = \strlen($needle);
+                $length = strlen($needle);
                 $number = substr_replace($number, $replacement, $pos, $length);
             }
         };
@@ -64,6 +60,8 @@ class ApiCore
         $replace('07', '+2547');
         $replace('2541', '+2541');
         $replace('01', '+2541');
+        $replace('7', '+2547');
+        $replace('1', '+2541');
         if ($strip_plus) {
             $replace('+254', '254');
         }
@@ -80,7 +78,7 @@ class ApiCore
      */
     private function makeRequest($body, $endpoint, MpesaAccount $account = null)
     {
-        if (\config('drh.mpesa.multi_tenancy', false)) {
+        if (config('drh.mpesa.multi_tenancy', false)) {
             $this->bearer = $this->engine->auth->authenticate($this->bulk, $account);
         } else {
             $this->bearer = $this->engine->auth->authenticate($this->bulk);

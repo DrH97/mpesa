@@ -8,7 +8,7 @@ use DrH\Mpesa\Exceptions\MpesaException;
  * Class RegisterUrl
  * @package DrH\Mpesa\Library
  */
-class RegisterUrl extends ApiCore
+class C2bRegister extends ApiCore
 {
     /**
      * The short code to register callbacks for.
@@ -39,7 +39,7 @@ class RegisterUrl extends ApiCore
      * @param $shortCode
      * @return $this
      */
-    public function register($shortCode)
+    public function shortcode($shortCode)
     {
         $this->shortCode = $shortCode;
         return $this;
