@@ -27,7 +27,7 @@
     },
     "autoload-dev": {
         "psr-4": {
-            "DrH\\Tests\\": "tests"
+            "DrH\\Mpesa\\Tests\\": "tests"
         }
     },
     "scripts": {
