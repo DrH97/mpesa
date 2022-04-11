@@ -100,21 +100,21 @@ if (!function_exists('getLogChannel')) {
 }
 
 if (!function_exists('mpesaLog')) {
-    function mpesaLog(string|array $level, string $message, array $context = []): void
+    function mpesaLog($level, string $message, array $context = []): void
     {
         getLogChannel()->log($level, $message, $context);
     }
 }
 
 if (!function_exists('mpesaLogError')) {
-    function mpesaLogError(string|array $message, array $context = []): void
+    function mpesaLogError($message, array $context = []): void
     {
         getLogChannel()->error($message, $context);
     }
 }
 
 if (!function_exists('mpesaLogInfo')) {
-    function mpesaLogInfo(string|array $message, array $context = []): void
+    function mpesaLogInfo($message, array $context = []): void
     {
         getLogChannel()->info($message, $context);
     }

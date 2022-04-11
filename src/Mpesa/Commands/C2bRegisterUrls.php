@@ -25,15 +25,20 @@ class C2bRegisterUrls extends Command
      */
     protected $description = 'Register c2b validation and confirmation URLs';
 
+    /**
+     * @var C2bRegister
+     */
+    private $c2bRegister;
 
     /**
      * Create a new command instance.
      *
      * @param C2bRegister $c2bRegister
      */
-    public function __construct(private C2bRegister $c2bRegister)
+    public function __construct(C2bRegister $c2bRegister)
     {
         parent::__construct();
+        $this->c2bRegister = $c2bRegister;
     }
 
     /**
