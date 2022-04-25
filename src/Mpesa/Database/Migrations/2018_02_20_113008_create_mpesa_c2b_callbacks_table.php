@@ -22,7 +22,7 @@ class CreateMpesaC2bCallbacksTable extends Migration
                 $table->string('TransTime');
                 $table->double('TransAmount', 10, 2);
                 $table->integer('BusinessShortCode');
-                $table->string('BillRefNumber');
+                $table->string('BillRefNumber')->nullable();
                 $table->string('InvoiceNumber')->nullable();
                 $table->string('ThirdPartyTransID')->nullable();
                 $table->double('OrgAccountBalance', 10, 2);
