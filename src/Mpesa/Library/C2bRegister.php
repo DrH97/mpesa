@@ -14,7 +14,7 @@ class C2bRegister extends ApiCore
 
     protected string $confirmationURL;
 
-    protected string $onTimeout = 'Completed';
+    protected string $onTimeout = 'Cancelled';
 
     public function shortcode(int $shortCode): self
     {

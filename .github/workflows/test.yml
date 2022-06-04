@@ -17,7 +17,7 @@ jobs:
         php-versions: [ '8.0', '8.1' ]
         laravel: [ '8', '9' ]
 
-    name: P${{ matrix.php-versions }} - L${{ matrix.laravel }} - ${{ matrix.dependency-stability }} - ${{ matrix.operating-system}}
+    name: P${{ matrix.php-versions }} - L${{ matrix.laravel }} - ${{ matrix.operating-system}}
 
     steps:
       - uses: actions/checkout@v2
