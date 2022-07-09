@@ -35,6 +35,6 @@ class MpesaB2cResultParameter extends Model
 
     protected function transactionCompletedDateTime(): Attribute
     {
-        return Attribute::set(fn($value) => Carbon::createFromFormat('d.m.Y H:i:s', $value, 'GMT+3'));
+        return Attribute::set(fn($value) => Carbon::createFromFormat('d.m.Y H:i:s', $value));
     }
 }
