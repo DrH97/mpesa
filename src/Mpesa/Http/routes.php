@@ -11,8 +11,8 @@ Route::group([
     Route::any('c2b-validation', [MpesaController::class, 'c2bValidation']);
     Route::any('c2b-confirmation', [MpesaController::class, 'c2bConfirmation']);
 
-    Route::any('b2c-timeout/{section?}', [MpesaController::class, 'b2cTimeout']);
-    Route::any('b2c-result/{section?}', [MpesaController::class, 'b2cResult']);
+    Route::any('timeout/b2c', [MpesaController::class, 'b2cTimeout']);
+    Route::any('result/b2c', [MpesaController::class, 'b2cResult']);
 
     Route::any('stk-callback', [MpesaController::class, 'stkCallback']);
 
