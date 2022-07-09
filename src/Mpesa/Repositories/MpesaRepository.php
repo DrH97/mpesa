@@ -121,7 +121,13 @@ class MpesaRepository
         $params_payload = $params['ResultParameter'];
         $new_params = Arr::pluck($params_payload, 'Value', 'Key');
 
-        $toSnakeCase = fn(string $k, string $v): array => [strtolower(preg_replace('/(?<!^)[A-Z]/', '_$0', $k)) => $v];
+        $toSnakeCase = fn(string $k, string $v): array => [
+            strtolower(preg_replace(
+                '/(?<!^)[A-Z]/',
+                '_$0',
+                preg_replace('/^B2C/', 'b2c', $k)
+            )) => $v
+        ];
         $new_params = array_merge(...array_map($toSnakeCase, array_keys($new_params), array_values($new_params)));
 
         $response->resultParameter()->create($new_params);
