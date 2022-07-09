@@ -3,6 +3,7 @@
 namespace DrH\Mpesa\Entities;
 
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
@@ -30,5 +31,10 @@ class MpesaB2cResultParameter extends Model
     public function response(): BelongsTo
     {
         return $this->belongsTo(MpesaBulkPaymentResponse::class);
+    }
+
+    protected function transactionCompletedDateTime(): Attribute
+    {
+        return Attribute::set(fn($value) => Carbon::createFromFormat('d.m.Y H:i:s', $value, 'GMT+3'));
     }
 }
