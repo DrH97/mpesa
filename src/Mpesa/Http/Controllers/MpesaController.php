@@ -37,12 +37,11 @@ class MpesaController extends Controller
     }
 
     /**
-     * @param string|null $initiator
      * @return JsonResponse
      */
-    public function b2cResult(string $initiator = null): JsonResponse
+    public function b2cResult(): JsonResponse
     {
-        $this->repository->handleResult($initiator);
+        $this->repository->handleResult();
         return response()->json(
             [
                 'ResponseCode' => '00000000',

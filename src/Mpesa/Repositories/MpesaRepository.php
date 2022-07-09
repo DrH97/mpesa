@@ -125,13 +125,11 @@ class MpesaRepository
 
     /**
      * @param string|null $initiator
-     * @return MpesaBulkPaymentResponse|void
+     * @return MpesaBulkPaymentResponse
      */
-    public function handleResult(string $initiator = null)
+    public function handleResult(): MpesaBulkPaymentResponse
     {
-        if ($initiator === 'b2c') {
-            return $this->handleB2cResult();
-        }
+        return $this->handleB2cResult();
     }
 
     /**
