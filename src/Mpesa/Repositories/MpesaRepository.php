@@ -102,17 +102,17 @@ class MpesaRepository
         ];
         $seek = ['originator_conversation_id' => $data['OriginatorConversationID']];
 
-        if ($data['ResultCode'] !== 0) {
+        if ($common['result_code'] !== 0) {
             $response = MpesaBulkPaymentResponse::updateOrCreate($seek, $common);
-            event(new B2cPaymentFailedEvent($response, $data));
+            event(new B2cPaymentFailedEvent($response, [...$common, ...$seek]));
             return $response;
         }
         $resultParameter = $data['ResultParameters'];
 
         $data['ResultParameters'] = json_encode($resultParameter);
-        $response = MpesaBulkPaymentResponse::updateOrCreate($seek, Arr::except($data, ['ReferenceData']));
+        $response = MpesaBulkPaymentResponse::updateOrCreate($seek, $common);
         $this->saveResultParams($resultParameter, $response);
-        event(new B2cPaymentSuccessEvent($response, $data));
+        event(new B2cPaymentSuccessEvent($response, [...$common, ...$seek]));
         return $response;
     }
 
@@ -120,6 +120,10 @@ class MpesaRepository
     {
         $params_payload = $params['ResultParameter'];
         $new_params = Arr::pluck($params_payload, 'Value', 'Key');
+
+        $toSnakeCase = fn(string $k, string $v): array => [strtolower(preg_replace('/(?<!^)[A-Z]/', '_$0', $k)) => $v];
+        $new_params = array_merge(array_map($toSnakeCase, array_keys($new_params), array_values($new_params)));
+
         $response->resultParameter()->create($new_params);
     }
 
