@@ -56,7 +56,7 @@ if (!function_exists('mpesa_simulate')) {
 if (!function_exists('shouldLog')) {
     function shouldLog(): bool
     {
-        return config('mpesa.logging.enabled') == true;
+        return config('drh.mpesa.logging.enabled') == true;
     }
 }
 
@@ -64,7 +64,15 @@ if (!function_exists('getLogger')) {
     function getLogger(): LoggerInterface
     {
         if (shouldLog()) {
-            return Log::stack(config('mpesa.logging.channels'));
+            $channels = [];
+            foreach (config('drh.mpesa.logging.channels') as $rawChannel) {
+                if (is_string($rawChannel)) {
+                    $channels[] = $rawChannel;
+                } elseif (is_array($rawChannel)) {
+                    $channels[] = Log::build($rawChannel);
+                }
+            }
+            return Log::stack($channels);
         }
 
         return Log::build([
@@ -75,7 +83,7 @@ if (!function_exists('getLogger')) {
 }
 
 if (!function_exists('mpesaLog')) {
-    function mpesaLog(string|array $level, string $message, array $context = []): void
+    function mpesaLog(string $level, string|array $message, array $context = []): void
     {
         $message = '[LIB - MPESA]: ' . $message;
         getLogger()->log($level, $message, $context);

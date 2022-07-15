@@ -62,16 +62,18 @@ class Authenticator
             $this->saveCredentials($body);
             return $body->access_token;
         } catch (RequestException $exception) {
+            mpesaLogError($exception->getMessage());
             throw $this->generateException($exception);
         } catch (ConnectException $exception) {
-            mpesaLogError($exception->getMessage());
             if ($this->retries > 0) {
                 mpesaLogInfo($this->retries . " auth trials left.");
 
                 $this->retries--;
+                // TODO: Implement exponential back-off
                 sleep($this->retryWaitTime);
                 return $this->authenticate($bulk, $account);
             }
+            mpesaLog('CRITICAL', $exception->getMessage());
             throw new ExternalServiceException('Mpesa Server Auth Error');
         }
     }
