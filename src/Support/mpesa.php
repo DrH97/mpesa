@@ -53,12 +53,24 @@ if (!function_exists('mpesa_simulate')) {
     }
 }
 
+if (!function_exists('shouldLog')) {
+    function shouldLog(): bool
+    {
+        return config('mpesa.logging.enabled') == true;
+    }
+}
+
 if (!function_exists('getLogChannel')) {
     function getLogChannel(): LoggerInterface
     {
+        //TODO: Add config to determine where to log
+        if (shouldLog()) {
+            return Log::build(config('mpesa.logging.channels'));
+        }
+
         return Log::build([
             'driver' => 'single',
-            'path' => storage_path('logs/mpesa.log'),
+            'path' => '/dev/null',
         ]);
     }
 }
@@ -66,6 +78,7 @@ if (!function_exists('getLogChannel')) {
 if (!function_exists('mpesaLog')) {
     function mpesaLog(string|array $level, string $message, array $context = []): void
     {
+        $message = '[LIB - MPESA]: ' . $message;
         getLogChannel()->log($level, $message, $context);
     }
 }
@@ -73,6 +86,7 @@ if (!function_exists('mpesaLog')) {
 if (!function_exists('mpesaLogError')) {
     function mpesaLogError(string|array $message, array $context = []): void
     {
+        $message = '[LIB - MPESA]: ' . $message;
         getLogChannel()->error($message, $context);
     }
 }
@@ -80,6 +94,7 @@ if (!function_exists('mpesaLogError')) {
 if (!function_exists('mpesaLogInfo')) {
     function mpesaLogInfo(string|array $message, array $context = []): void
     {
+        $message = '[LIB - MPESA]: ' . $message;
         getLogChannel()->info($message, $context);
     }
 }
