@@ -1,8 +1,6 @@
 <?php
 
 
-use Monolog\Handler\StreamHandler;
-
 return [
     /*
      |------------------------------------------------------
@@ -154,23 +152,9 @@ return [
     ],
 
     'logging' => [
-        'enabled' => env('MPESA_ENABLE_LOGGING', false),
+        'enabled' => env('MPESA_ENABLE_LOGGING', true),
         'channels' => [
-            'single' => [
-                'driver' => 'single',
-                'path' => storage_path('logs/mpesa.log'),
-                'level' => env('LOG_LEVEL', 'debug'),
-            ],
-
-            'stderr' => [
-                'driver' => 'monolog',
-                'level' => env('LOG_LEVEL', 'debug'),
-                'handler' => StreamHandler::class,
-                'formatter' => env('LOG_STDERR_FORMATTER'),
-                'with' => [
-                    'stream' => 'php://stderr',
-                ],
-            ],
+            'single', 'stderr',
         ]
     ]
 ];
