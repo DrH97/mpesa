@@ -104,7 +104,7 @@ class ApiCore
     {
         $url = EndpointsRepository::build($endpoint, $account);
         try {
-            mpesaLogInfo('-- REQ --', [$url, $body, $account]);
+            mpesaLogInfo('-- REQ --', [$url, getSanitizedArray($body)]);
             $response = $this->makeRequest($body, $url, $account);
             $_body = json_decode($response->getBody(), true);
             mpesaLogInfo('-- RES --', $_body);

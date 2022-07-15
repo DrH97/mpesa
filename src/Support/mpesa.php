@@ -9,6 +9,7 @@ use DrH\Mpesa\Library\MpesaAccount;
 use DrH\Mpesa\Library\Simulate;
 use Illuminate\Support\Facades\Log;
 use Psr\Log\LoggerInterface;
+use function DeepCopy\deep_copy;
 
 if (!function_exists('mpesa_balance')) {
     function mpesa_balance(): array
@@ -103,5 +104,22 @@ if (!function_exists('mpesaLogInfo')) {
     {
         $message = '[LIB - MPESA]: ' . $message;
         getLogger()->info($message, $context);
+    }
+}
+
+//TODO: make this available outside library
+if (!function_exists('getSanitizedArray')) {
+    function getSanitizedArray(array $data): array
+    {
+        $dataCopy = deep_copy($data);
+        $sensitiveKeys = ['password'];
+
+        foreach ($dataCopy as $key => $value) {
+            if (in_array(mb_strtolower($key), $sensitiveKeys)) {
+                unset($dataCopy[$key]);
+            }
+        }
+
+        return $dataCopy;
     }
 }
