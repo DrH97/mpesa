@@ -1,6 +1,7 @@
 <?php
 
-use GuzzleHttp\Handler\StreamHandler;
+
+use Monolog\Handler\StreamHandler;
 
 return [
     /*
@@ -152,16 +153,9 @@ return [
         'result_url' => env('APP_URL') . '/payments/callbacks/result/',
     ],
 
-
     'logging' => [
         'enabled' => env('MPESA_ENABLE_LOGGING', false),
         'channels' => [
-            'stack' => [
-                'driver' => 'stack',
-                'channels' => ['stderr', 'single'],
-                'ignore_exceptions' => false,
-            ],
-
             'single' => [
                 'driver' => 'single',
                 'path' => storage_path('logs/mpesa.log'),

@@ -65,7 +65,7 @@ if (!function_exists('getLogChannel')) {
     {
         //TODO: Add config to determine where to log
         if (shouldLog()) {
-            return Log::build(config('mpesa.logging.channels'));
+            return Log::stack(config('mpesa.logging.channels'));
         }
 
         return Log::build([
