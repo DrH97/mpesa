@@ -54,7 +54,7 @@ class C2bRegisterUrls extends Command
 
         $this->info("Logging response");
 
-        mpesaLogInfo($response);
+        mpesaLogInfo('', $response);
     }
 
     private function askShortcode(): int

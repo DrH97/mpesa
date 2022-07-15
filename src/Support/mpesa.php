@@ -60,10 +60,9 @@ if (!function_exists('shouldLog')) {
     }
 }
 
-if (!function_exists('getLogChannel')) {
-    function getLogChannel(): LoggerInterface
+if (!function_exists('getLogger')) {
+    function getLogger(): LoggerInterface
     {
-        //TODO: Add config to determine where to log
         if (shouldLog()) {
             return Log::stack(config('mpesa.logging.channels'));
         }
@@ -79,7 +78,7 @@ if (!function_exists('mpesaLog')) {
     function mpesaLog(string|array $level, string $message, array $context = []): void
     {
         $message = '[LIB - MPESA]: ' . $message;
-        getLogChannel()->log($level, $message, $context);
+        getLogger()->log($level, $message, $context);
     }
 }
 
@@ -87,7 +86,7 @@ if (!function_exists('mpesaLogError')) {
     function mpesaLogError(string|array $message, array $context = []): void
     {
         $message = '[LIB - MPESA]: ' . $message;
-        getLogChannel()->error($message, $context);
+        getLogger()->error($message, $context);
     }
 }
 
@@ -95,6 +94,6 @@ if (!function_exists('mpesaLogInfo')) {
     function mpesaLogInfo(string|array $message, array $context = []): void
     {
         $message = '[LIB - MPESA]: ' . $message;
-        getLogChannel()->info($message, $context);
+        getLogger()->info($message, $context);
     }
 }

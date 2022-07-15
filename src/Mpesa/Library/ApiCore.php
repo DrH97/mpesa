@@ -104,11 +104,14 @@ class ApiCore
     {
         $url = EndpointsRepository::build($endpoint, $account);
         try {
+            mpesaLogInfo('-- REQ --', [$url, $body, $account]);
             $response = $this->makeRequest($body, $url, $account);
             $_body = json_decode($response->getBody(), true);
+            mpesaLogInfo('-- RES --', $_body);
 
             return (array)$_body;
         } catch (RequestException $exception) {
+            mpesaLogError($exception->getMessage());
             throw $this->generateException($exception);
         } catch (ConnectException $exception) {
             mpesaLogError($exception->getMessage());
