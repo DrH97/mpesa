@@ -57,11 +57,13 @@ class BulkSender extends ApiCore
      */
     public function send(string $number = null, int $amount = null, string $remarks = null): MpesaBulkPaymentRequest
     {
+        $amount = $this->getAmount($amount ?: $this->amount);
+
         $body = [
             'InitiatorName' => config('drh.mpesa.b2c.initiator'),
             'SecurityCredential' => config('drh.mpesa.b2c.security_credential'),
             'CommandID' => 'BusinessPayment', //SalaryPayment,BusinessPayment,PromotionPayment
-            'Amount' => $amount ?: $this->amount,
+            'Amount' => $amount,
             'PartyA' => config('drh.mpesa.b2c.short_code'),
             'PartyB' => $this->formatPhoneNumber($number ?: $this->number),
             'Remarks' => $remarks ?: $this->remarks,

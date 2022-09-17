@@ -98,9 +98,12 @@ class Simulate extends ApiCore
         }
         $shortCode = config('drh.mpesa.c2b.short_code');
         $good_phone = $this->formatPhoneNumber($number ?: $this->number);
+
+        $amount = $this->getAmount($amount ?: $this->amount);
+
         $body = [
             'CommandID' => $command ?? $this->command ?? config('drh.mpesa.c2b.transaction_type'),
-            'Amount' => $amount ?: $this->amount,
+            'Amount' => $amount,
             'Msisdn' => $good_phone,
             'ShortCode' => $shortCode,
             'BillRefNumber' => $reference ?: $this->reference,
