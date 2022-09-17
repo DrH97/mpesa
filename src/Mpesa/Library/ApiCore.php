@@ -136,4 +136,17 @@ class ApiCore
         mpesaLogError($exception->getMessage());
         return new ExternalServiceException($exception->getResponse()->getBody());
     }
+
+    protected function getAmount(int $amount, MpesaAccount $account = null)
+    {
+        if (config('drh.mpesa.sandbox') || ($account && $account->sandbox)) {
+            $sandboxTestAmount = config('drh.mpesa.sandbox_test_amount', 0);
+
+            if ($sandboxTestAmount !== 0) {
+                $amount = $sandboxTestAmount;
+            }
+        }
+
+        return $amount;
+    }
 }

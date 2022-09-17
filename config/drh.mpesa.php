@@ -151,8 +151,18 @@ return [
         'result_url' => env('APP_URL') . '/payments/callbacks/result/',
     ],
 
+    /*
+     |------------------------------------------------------
+     | Set sandbox amount
+     | ------------------------------------------------------
+     | Specify whether to use actual amount on sandbox
+     | 0 - actual amount, any other value will use that value
+     |
+     */
+    'sandbox_test_amount' => env('MPESA_SANDBOX_AMOUNT', 1),
+
     'logging' => [
-        'enabled' => env('MPESA_ENABLE_LOGGING', true),
+        'enabled' => env('MPESA_ENABLE_LOGGING', false),
         'channels' => [
             'single', 'stderr',
         ]

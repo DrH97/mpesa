@@ -58,7 +58,7 @@ class StkPush extends ApiCore
      */
     public function usingReference(string $reference, string $description): self
     {
-        preg_match('/[^A-Za-z0-9]/', $reference, $matches);
+        preg_match('/[^A-z0-9]/', $reference, $matches);
         if (count($matches)) {
             throw new ClientException('Reference should be alphanumeric.');
         }
@@ -112,12 +112,15 @@ class StkPush extends ApiCore
 
         $password = base64_encode($shortCode . $passkey . $time);
         $good_phone = $this->formatPhoneNumber($number ?: $this->number);
+
+        $amount = $this->getAmount($amount ?: $this->amount);
+
         $body = [
             'BusinessShortCode' => $shortCode,
             'Password' => $password,
             'Timestamp' => $time,
             'TransactionType' => $transactionType,
-            'Amount' => $amount ?: $this->amount,
+            'Amount' => $amount,
             'PartyA' => $good_phone,
             'PartyB' => $partyB ?? $shortCode,
             'PhoneNumber' => $good_phone,
