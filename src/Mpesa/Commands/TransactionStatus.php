@@ -42,21 +42,11 @@ class TransactionStatus extends Command
         $results = $this->repository->queryBulkStatus();
 
         /** @var array $results */
-        if (count($results['successful'])) {
-            $this->info("Logging successful queries");
-
-            mpesaLogInfo('', $results['successful']);
-        }
-
-        if (count($results['errors'])) {
-            $this->info("Logging failed queries");
-
-            mpesaLogError('', $results['errors']);
-        }
-
-        if (empty($results['successful']) && empty($results['errors'])) {
+        if (count($results['status'])) {
+            $this->info("Logging status queries");
+            mpesaLogInfo('', $results['status']);
+        } else {
             $this->comment("Nothing to query... all transactions seem to be ok.");
-            mpesaLogInfo('Nothing to query... all transactions seem to be ok.');
         }
     }
 }
