@@ -37,10 +37,13 @@ class MpesaController extends Controller
     }
 
     /**
+     * @param Request $request
      * @return JsonResponse
      */
-    public function b2cResult(): JsonResponse
+    public function b2cResult(Request $request): JsonResponse
     {
+        mpesaLogInfo('B2C CB: ', [$request]);
+
         $this->repository->handleResult();
         return response()->json(
             [
@@ -63,6 +66,9 @@ class MpesaController extends Controller
      */
     public function stkCallback(Request $request): JsonResponse
     {
+        mpesaLogInfo('STK CB: ', [$request]);
+
+        // TODO: Add to try catch and always return success response - do for all entry points
         $this->repository->processStkPushCallback(json_encode($request->Body));
         $resp = [
             'ResultCode' => 0,
