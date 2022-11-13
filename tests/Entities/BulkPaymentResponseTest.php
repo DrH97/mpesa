@@ -56,7 +56,7 @@ class BulkPaymentResponseTest extends TestCase
             'transaction_completed_date_time' => "19.12.2019 11:45:50"
         ]);
 
-        $this->assertEquals($response->resultParameter->toArray(), $parameter->refresh()->toArray());
+        $this->assertEquals($response->result->toArray(), $parameter->refresh()->toArray());
     }
 
 }

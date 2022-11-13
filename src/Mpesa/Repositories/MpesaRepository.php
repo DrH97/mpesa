@@ -201,6 +201,6 @@ class MpesaRepository
                 $transactions[$item->transaction_id] = $e->getMessage();
             }
         }
-        return ['status' => $transactions];
+        return $transactions;
     }
 }
