@@ -149,7 +149,7 @@ class Authenticator
      *
      * @param mixed $credentials
      */
-    private function saveCredentials(mixed $credentials)
+    private function saveCredentials(mixed $credentials): void
     {
         Cache::put($this->credentials, $credentials->access_token, 30);
     }

@@ -7,7 +7,7 @@ use DrH\Mpesa\Entities\MpesaStkRequest;
 use DrH\Mpesa\Tests\MockServerTestCase;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
-class StkStatusCommandTest extends MockServerTestCase
+class StkQueryCommandTest extends MockServerTestCase
 {
     use RefreshDatabase;
 

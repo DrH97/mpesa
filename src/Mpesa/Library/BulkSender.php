@@ -3,10 +3,12 @@
 namespace DrH\Mpesa\Library;
 
 use DrH\Mpesa\Entities\MpesaBulkPaymentRequest;
+use DrH\Mpesa\Entities\MpesaBulkPaymentResponse;
 use DrH\Mpesa\Exceptions\ClientException;
 use DrH\Mpesa\Exceptions\ExternalServiceException;
 use Exception;
 use GuzzleHttp\Exception\GuzzleException;
+use GuzzleHttp\Exception\RequestException;
 use function config;
 
 class BulkSender extends ApiCore
@@ -97,5 +99,38 @@ class BulkSender extends ApiCore
         ];
         $this->bulk = true;
         return $this->sendRequest($body, 'account_balance');
+    }
+
+
+    /**
+     * Query a transaction.
+     *
+     * @param string $transactionId
+     * @return array
+     * @throws ClientException
+     * @throws ExternalServiceException
+     * @throws GuzzleException
+     */
+    public function status(string $transactionId): array
+    {
+        // TODO: Should add index on transaction id, and since mpesa claim it is unique, a unique index?
+        $transactionId = MpesaBulkPaymentResponse::whereTransactionId($transactionId)->find()->transaction_id;
+
+        $body = [
+            'Initiator' => config('drh.mpesa.bulk.initiator'),
+            'SecurityCredential' => config('drh.mpesa.bulk.security_credential'),
+            'CommandID' => 'TransactionStatusQuery',
+            'TransactionID' => $transactionId,
+            'PartyA' => config('drh.mpesa.bulk.short_code'),
+            'IdentifierType' => 1,
+            'ResultURL' => config('drh.mpesa.bulk.result_url') . 'bulk_balance',
+            'QueueTimeOutURL' => config('drh.mpesa.bulk.timeout_url') . 'bulk_balance',
+            'Remarks' => 'Checking Status',
+        ];
+        try {
+            return $this->sendRequest($body, 'transaction_status');
+        } catch (RequestException $exception) {
+            throw new ExternalServiceException($exception->getMessage());
+        }
     }
 }

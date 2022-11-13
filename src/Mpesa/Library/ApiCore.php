@@ -2,6 +2,7 @@
 
 namespace DrH\Mpesa\Library;
 
+use DrH\Mpesa\Exceptions\ClientException;
 use DrH\Mpesa\Exceptions\ExternalServiceException;
 use DrH\Mpesa\Repositories\EndpointsRepository;
 use DrH\Mpesa\Repositories\MpesaRepository;
@@ -69,7 +70,7 @@ class ApiCore
      * @return ResponseInterface
      * @throws GuzzleException
      * @throws ExternalServiceException
-     * @throws \DrH\Mpesa\Exceptions\ClientException
+     * @throws ClientException
      */
     private function makeRequest(array $body, string $endpoint, MpesaAccount $account = null): ResponseInterface
     {
@@ -98,7 +99,7 @@ class ApiCore
      * @param MpesaAccount|null $account
      * @return array
      * @throws GuzzleException
-     * @throws ExternalServiceException|\DrH\Mpesa\Exceptions\ClientException
+     * @throws ExternalServiceException|ClientException
      */
     public function sendRequest(array $body, string $endpoint, MpesaAccount $account = null): array
     {

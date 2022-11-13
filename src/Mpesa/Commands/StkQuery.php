@@ -5,7 +5,7 @@ namespace DrH\Mpesa\Commands;
 use DrH\Mpesa\Repositories\MpesaRepository;
 use Illuminate\Console\Command;
 
-class StkStatus extends Command
+class StkQuery extends Command
 {
     /**
      * The name and signature of the console command.
