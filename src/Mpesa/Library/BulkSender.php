@@ -105,12 +105,13 @@ class BulkSender extends ApiCore
     /**
      * Query a transaction.
      *
-     * @param int $transactionId
+     * @param string $transactionId
      * @return array
+     * @throws ClientException
+     * @throws ExternalServiceException
      * @throws GuzzleException
-     * @throws ExternalServiceException|ClientException
      */
-    public function status(int $transactionId): array
+    public function status(string $transactionId): array
     {
         $transactionId = MpesaBulkPaymentResponse::find($transactionId)->transaction_id;
 
