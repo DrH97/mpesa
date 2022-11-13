@@ -3,7 +3,9 @@
 namespace DrH\Mpesa;
 
 use DrH\Mpesa\Commands\C2bRegisterUrls;
+use DrH\Mpesa\Commands\StkQuery;
 use DrH\Mpesa\Commands\StkStatus;
+use DrH\Mpesa\Commands\TransactionStatus;
 use DrH\Mpesa\Events\StkPushPaymentFailedEvent;
 use DrH\Mpesa\Events\StkPushPaymentSuccessEvent;
 use DrH\Mpesa\Http\Middlewares\MpesaCors;
@@ -35,7 +37,8 @@ class MpesaServiceProvider extends ServiceProvider
         $this->commands(
             [
                 C2bRegisterUrls::class,
-                StkStatus::class,
+                StkQuery::class,
+                TransactionStatus::class,
             ]
         );
 
@@ -79,7 +82,7 @@ class MpesaServiceProvider extends ServiceProvider
             }
         );
         $this->app->bind(
-            'mpesa_b2c',
+            'mpesa_bulk',
             function () {
                 return $this->app->make(BulkSender::class);
             }

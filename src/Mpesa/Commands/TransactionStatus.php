@@ -5,21 +5,21 @@ namespace DrH\Mpesa\Commands;
 use DrH\Mpesa\Repositories\MpesaRepository;
 use Illuminate\Console\Command;
 
-class StkStatus extends Command
+class TransactionStatus extends Command
 {
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'mpesa:query_stk_status';
+    protected $signature = 'mpesa:transaction_status';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Check status of all pending stk transactions';
+    protected $description = 'Check status of all pending bulk transactions';
 
     /**
      * Create a new command instance.
@@ -39,7 +39,7 @@ class StkStatus extends Command
     {
         mpesaLogInfo($this->description);
 
-        $results = $this->repository->queryStkStatus();
+        $results = $this->repository->queryBulkStatus();
 
         /** @var array $results */
         if (count($results['successful'])) {

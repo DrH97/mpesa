@@ -26,7 +26,7 @@ return [
    |--------------------------------------------------------------------------
    |
    | If you decide to cache credentials, they will be kept in your app cache
-   | configuration for sometime. Reducing the need for many requests for
+   | configuration for some time. Reducing the need for many requests for
    | generating credentials
    |
    */
@@ -156,7 +156,7 @@ return [
      | Set sandbox amount
      | ------------------------------------------------------
      | Specify whether to use actual amount on sandbox
-     | 0 - actual amount, any other value will use that value
+     | 0 - actual amount, any other positive value will use that value
      |
      */
     'sandbox_test_amount' => env('MPESA_SANDBOX_AMOUNT', 1),

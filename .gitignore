@@ -1,11 +1,11 @@
 .couscous
-vendor/
+vendor
 coverage.clover
-node_modules/
+node_modules
 composer.lock
 yarn.lock
 .DS_Store
-.idea/
+.idea
 
-coverage/
+coverage
 .phpunit.result.cache

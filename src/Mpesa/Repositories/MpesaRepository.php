@@ -130,11 +130,10 @@ class MpesaRepository
         ];
         $new_params = array_merge(...array_map($toSnakeCase, array_keys($new_params), array_values($new_params)));
 
-        $response->resultParameter()->create($new_params);
+        $response->result()->create($new_params);
     }
 
     /**
-     * @param string|null $initiator
      * @return MpesaBulkPaymentResponse
      */
     public function handleResult(): MpesaBulkPaymentResponse
@@ -187,5 +186,22 @@ class MpesaRepository
         } else {
             event(new StkPushPaymentFailedEvent($stkCallback, $response));
         }
+    }
+
+
+    public function queryBulkStatus(): array
+    {
+        /** @var MpesaStkRequest[] $stk */
+        $bulk = MpesaBulkPaymentResponse::whereDoesntHave('result')->get();
+        $transactions = [];
+        foreach ($bulk as $item) {
+            try {
+                $status = (object)mpesa_bulk_status($item->transaction_id);
+                $transactions[$item->transaction_id] = $status->ResponseDescription;
+            } catch (Exception $e) {
+                $transactions[$item->transaction_id] = $e->getMessage();
+            }
+        }
+        return ['status' => $transactions];
     }
 }

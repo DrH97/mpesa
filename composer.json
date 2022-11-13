@@ -49,7 +49,7 @@
                 "DrH\\Mpesa\\MpesaServiceProvider"
             ],
             "aliases": {
-                "B2C": "DrH\\Mpesa\\Facades\\B2C",
+                "Bulk": "DrH\\Mpesa\\Facades\\Bulk",
                 "Identity": "DrH\\Mpesa\\Facades\\Identity",
                 "Registrar": "DrH\\Mpesa\\Facades\\Registrar",
                 "STK": "DrH\\Mpesa\\Facades\\STK"

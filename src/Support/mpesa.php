@@ -2,7 +2,7 @@
 
 use DrH\Mpesa\Entities\MpesaBulkPaymentRequest;
 use DrH\Mpesa\Entities\MpesaStkRequest;
-use DrH\Mpesa\Facades\B2C;
+use DrH\Mpesa\Facades\Bulk;
 use DrH\Mpesa\Facades\Identity;
 use DrH\Mpesa\Facades\STK;
 use DrH\Mpesa\Library\MpesaAccount;
@@ -14,13 +14,19 @@ use function DeepCopy\deep_copy;
 if (!function_exists('mpesa_balance')) {
     function mpesa_balance(): array
     {
-        return B2C::balance();
+        return Bulk::balance();
     }
 }
 if (!function_exists('mpesa_send')) {
     function mpesa_send(string $phone, int $amount, string $remarks): MpesaBulkPaymentRequest
     {
-        return B2C::send($phone, $amount, $remarks);
+        return Bulk::send($phone, $amount, $remarks);
+    }
+}
+if (!function_exists('mpesa_bulk_status')) {
+    function mpesa_bulk_status(string $stkRequestId): array
+    {
+        return Bulk::status($stkRequestId);
     }
 }
 if (!function_exists('mpesa_id_check')) {
