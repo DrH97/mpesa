@@ -113,7 +113,8 @@ class BulkSender extends ApiCore
      */
     public function status(string $transactionId): array
     {
-        $transactionId = MpesaBulkPaymentResponse::find($transactionId)->transaction_id;
+        // TODO: Should add index on transaction id, and since mpesa claim it is unique, a unique index?
+        $transactionId = MpesaBulkPaymentResponse::whereTransactionId($transactionId)->find()->transaction_id;
 
         $body = [
             'Initiator' => config('drh.mpesa.bulk.initiator'),

@@ -191,7 +191,6 @@ class MpesaRepository
 
     public function queryBulkStatus(): array
     {
-        /** @var MpesaStkRequest[] $stk */
         $bulk = MpesaBulkPaymentResponse::whereDoesntHave('result')->get();
         $transactions = [];
         foreach ($bulk as $item) {

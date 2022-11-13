@@ -41,10 +41,9 @@ class TransactionStatus extends Command
 
         $results = $this->repository->queryBulkStatus();
 
-        /** @var array $results */
-        if (count($results['status'])) {
+        if (count($results)) {
             $this->info("Logging status queries");
-            mpesaLogInfo('', $results['status']);
+            mpesaLogInfo('', $results);
         } else {
             $this->comment("Nothing to query... all transactions seem to be ok.");
         }
