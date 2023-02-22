@@ -84,7 +84,7 @@ class MpesaRepository
         ];
 
         $real_data = array_merge(...array_map($toSnakeCase, array_keys($real_data), array_values($real_data)));
-        $real_data['msisdn'] = $real_data['MSISDN'];
+        $real_data['msisdn'] = $real_data['m_s_i_s_d_n'];
         unset($real_data['m_s_i_s_d_n']);
 
         mpesaLogInfo('createCallback', $real_data);
