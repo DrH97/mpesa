@@ -9,7 +9,6 @@ use DrH\Mpesa\Entities\MpesaStkCallback;
 use DrH\Mpesa\Entities\MpesaStkRequest;
 use DrH\Mpesa\Events\B2cPaymentFailedEvent;
 use DrH\Mpesa\Events\B2cPaymentSuccessEvent;
-use DrH\Mpesa\Events\C2bConfirmationEvent;
 use DrH\Mpesa\Events\StkPushPaymentFailedEvent;
 use DrH\Mpesa\Events\StkPushPaymentSuccessEvent;
 use Exception;
@@ -43,10 +42,8 @@ class MpesaRepository
                     $real_data[Str::snake($callback->Name)] = @$callback->Value;
                 }
             }
-            $callback = MpesaStkCallback::create($real_data);
-        } else {
-            $callback = MpesaStkCallback::create($real_data);
         }
+        $callback = MpesaStkCallback::create($real_data);
         $this->fireStkEvent($callback, get_object_vars($data));
         return $callback;
     }
@@ -76,9 +73,26 @@ class MpesaRepository
     public function processC2bConfirmation(string $json): MpesaC2bCallback
     {
         $data = json_decode($json, true);
-        $callback = MpesaC2bCallback::create($data);
-        event(new C2bConfirmationEvent($callback, $data));
-        return $callback;
+        $real_data = [];
+
+        $toSnakeCase = fn(string $k, string $v): array => [
+            strtolower(preg_replace(
+                '/(?<!^)[A-Z]/',
+                '_$0',
+                preg_replace('/ID/', 'Id', $k)
+            )) => $v
+        ];
+
+        $real_data = array_merge(...array_map($toSnakeCase, array_keys($real_data), array_values($real_data)));
+        $real_data['msisdn'] = $real_data['MSISDN'];
+        unset($real_data['m_s_i_s_d_n']);
+
+        mpesaLogInfo('createCallback', $real_data);
+        return $data;
+
+//        $callback = MpesaC2bCallback::create($real_data);
+//        event(new C2bConfirmationEvent($callback, $data));
+//        return $callback;
     }
 
     /**
