@@ -4,8 +4,8 @@ namespace DrH\Mpesa;
 
 use DrH\Mpesa\Commands\C2bRegisterUrls;
 use DrH\Mpesa\Commands\StkQuery;
-use DrH\Mpesa\Commands\StkStatus;
 use DrH\Mpesa\Commands\TransactionStatus;
+use DrH\Mpesa\Events\C2bConfirmationEvent;
 use DrH\Mpesa\Events\StkPushPaymentFailedEvent;
 use DrH\Mpesa\Events\StkPushPaymentSuccessEvent;
 use DrH\Mpesa\Http\Middlewares\MpesaCors;
@@ -14,6 +14,7 @@ use DrH\Mpesa\Library\C2bRegister;
 use DrH\Mpesa\Library\Core;
 use DrH\Mpesa\Library\IdCheck;
 use DrH\Mpesa\Library\StkPush;
+use DrH\Mpesa\Listeners\C2bPaymentConfirmation;
 use DrH\Mpesa\Listeners\StkPaymentFailed;
 use DrH\Mpesa\Listeners\StkPaymentSuccessful;
 use GuzzleHttp\Client;
@@ -96,6 +97,8 @@ class MpesaServiceProvider extends ServiceProvider
     {
         Event::listen(StkPushPaymentSuccessEvent::class, StkPaymentSuccessful::class);
         Event::listen(StkPushPaymentFailedEvent::class, StkPaymentFailed::class);
+
+        Event::listen(C2bConfirmationEvent::class, C2bPaymentConfirmation::class);
     }
 
     private function requireHelperScripts()
