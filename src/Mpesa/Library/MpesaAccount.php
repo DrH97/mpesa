@@ -4,8 +4,8 @@ namespace DrH\Mpesa\Library;
 
 class MpesaAccount
 {
-    const TILL = "TILL";
-    const PAYBILL = "PAYBILL";
+    public const TILL = "TILL";
+    public const PAYBILL = "PAYBILL";
 
     /**
      * MpesaAccount constructor.
