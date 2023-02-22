@@ -164,7 +164,7 @@ return [
     'logging' => [
         'enabled' => env('MPESA_ENABLE_LOGGING', false),
         'channels' => [
-            'single', 'stderr',
+            'single', 'stderr', 'syslog'
         ]
     ]
 ];
