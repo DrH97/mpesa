@@ -9,6 +9,7 @@ use DrH\Mpesa\Entities\MpesaStkCallback;
 use DrH\Mpesa\Entities\MpesaStkRequest;
 use DrH\Mpesa\Events\B2cPaymentFailedEvent;
 use DrH\Mpesa\Events\B2cPaymentSuccessEvent;
+use DrH\Mpesa\Events\C2bConfirmationEvent;
 use DrH\Mpesa\Events\StkPushPaymentFailedEvent;
 use DrH\Mpesa\Events\StkPushPaymentSuccessEvent;
 use Exception;
@@ -30,8 +31,8 @@ class MpesaRepository
         $real_data = [
             'merchant_request_id' => $data->MerchantRequestID,
             'checkout_request_id' => $data->CheckoutRequestID,
-            'result_code' => $data->ResultCode,
-            'result_desc' => $data->ResultDesc,
+            'result_code'         => $data->ResultCode,
+            'result_desc'         => $data->ResultDesc,
         ];
         if ($data->ResultCode == 0) {
             $_payload = $data->CallbackMetadata->Item;
@@ -49,20 +50,20 @@ class MpesaRepository
     }
 
     /**
-     * @param $response
+     * @param       $response
      * @param array $body
      * @return MpesaBulkPaymentRequest
      */
     public function saveB2cRequest(object $response, array $body = []): MpesaBulkPaymentRequest
     {
         return MpesaBulkPaymentRequest::create([
-            'conversation_id' => $response->ConversationID,
+            'conversation_id'            => $response->ConversationID,
             'originator_conversation_id' => $response->OriginatorConversationID,
-            'amount' => $body['Amount'],
-            'phone' => $body['PartyB'],
-            'remarks' => $body['Remarks'],
-            'command_id' => $body['CommandID'],
-            'relation_id' => Auth::id(),
+            'amount'                     => $body['Amount'],
+            'phone'                      => $body['PartyB'],
+            'remarks'                    => $body['Remarks'],
+            'command_id'                 => $body['CommandID'],
+            'relation_id'                => Auth::id(),
         ]);
     }
 
@@ -72,27 +73,25 @@ class MpesaRepository
      */
     public function processC2bConfirmation(string $json): MpesaC2bCallback
     {
-        $data = json_decode($json, true);
-        $real_data = [];
-
-        $toSnakeCase = fn(string $k, string $v): array => [
-            strtolower(preg_replace(
+        $data = collect(json_decode($json, true))->mapWithKeys(function ($value, $key) {
+            $key = strtolower(preg_replace(
                 '/(?<!^)[A-Z]/',
                 '_$0',
-                preg_replace('/ID/', 'Id', $k)
-            )) => $v
-        ];
+                preg_replace('/ID/', 'Id', $key)
+            ));
 
-        $real_data = array_merge(...array_map($toSnakeCase, array_keys($real_data), array_values($real_data)));
-        $real_data['msisdn'] = $real_data['m_s_i_s_d_n'];
-        unset($real_data['m_s_i_s_d_n']);
+            return [$key => $value];
+        })->toArray();
 
-        mpesaLogInfo('createCallback', $real_data);
-        return $data;
+        $data['msisdn'] = $data['m_s_i_s_d_n'];
+        unset($data['m_s_i_s_d_n']);
 
-//        $callback = MpesaC2bCallback::create($real_data);
-//        event(new C2bConfirmationEvent($callback, $data));
-//        return $callback;
+        mpesaLogInfo('createCallback', $data);
+
+        $callback = MpesaC2bCallback::create($data);
+        event(new C2bConfirmationEvent($callback, $data));
+
+        return $callback;
     }
 
     /**
@@ -108,11 +107,11 @@ class MpesaRepository
         }
 
         $common = [
-            'result_type' => $data['ResultType'],
-            'result_code' => $data['ResultCode'],
-            'result_desc' => $data['ResultDesc'],
+            'result_type'     => $data['ResultType'],
+            'result_code'     => $data['ResultCode'],
+            'result_desc'     => $data['ResultDesc'],
             'conversation_id' => $data['ConversationID'],
-            'transaction_id' => $data['TransactionID']
+            'transaction_id'  => $data['TransactionID']
         ];
         $seek = ['originator_conversation_id' => $data['OriginatorConversationID']];
 
@@ -174,9 +173,9 @@ class MpesaRepository
                 $attributes = [
                     'merchant_request_id' => $status->MerchantRequestID,
                     'checkout_request_id' => $status->CheckoutRequestID,
-                    'result_code' => $status->ResultCode,
-                    'result_desc' => $status->ResultDesc,
-                    'amount' => $item->amount,
+                    'result_code'         => $status->ResultCode,
+                    'result_desc'         => $status->ResultDesc,
+                    'amount'              => $item->amount,
                 ];
                 $success[$item->checkout_request_id] = $status->ResultDesc;
                 $callback = MpesaStkCallback::create($attributes);
@@ -190,7 +189,7 @@ class MpesaRepository
 
     /**
      * @param MpesaStkCallback $stkCallback
-     * @param array $response
+     * @param array            $response
      * @return void
      */
     private function fireStkEvent(MpesaStkCallback $stkCallback, array $response): void
