@@ -104,7 +104,7 @@ class MpesaController extends Controller
     {
         mpesaLogInfo('C2B CB: ', [$request]);
 
-        $this->repository->processC2bConfirmation(json_encode($request->all()));
+        $this->repository->processC2bConfirmation($request->all());
         $resp = [
             'ResultCode' => 0,
             'ResultDesc' => 'Confirmation received successfully',
