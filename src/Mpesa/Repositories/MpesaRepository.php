@@ -71,9 +71,9 @@ class MpesaRepository
      * @param string $json
      * @return MpesaC2bCallback
      */
-    public function processC2bConfirmation(string $json): MpesaC2bCallback
+    public function processC2bConfirmation(array $data): MpesaC2bCallback
     {
-        $data = collect(json_decode($json, true))->mapWithKeys(function ($value, $key) {
+        $data = collect($data)->mapWithKeys(function ($value, $key) {
             $key = strtolower(preg_replace(
                 '/(?<!^)[A-Z]/',
                 '_$0',
