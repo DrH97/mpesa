@@ -5,7 +5,7 @@
     "keywords": ["library", "mpesa"],
     "license": "MIT",
     "require": {
-        "php": "^8.1",
+        "php": "^8.0",
         "ext-json": "*",
         "ext-openssl": "*",
         "doctrine/dbal": "^3.1",
