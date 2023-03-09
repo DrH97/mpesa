@@ -31,8 +31,8 @@ class MpesaRepository
         $real_data = [
             'merchant_request_id' => $data->MerchantRequestID,
             'checkout_request_id' => $data->CheckoutRequestID,
-            'result_code'         => $data->ResultCode,
-            'result_desc'         => $data->ResultDesc,
+            'result_code' => $data->ResultCode,
+            'result_desc' => $data->ResultDesc ?? $data->ResultCode,
         ];
         if ($data->ResultCode == 0) {
             $_payload = $data->CallbackMetadata->Item;
@@ -43,6 +43,9 @@ class MpesaRepository
                     $real_data[Str::snake($callback->Name)] = @$callback->Value;
                 }
             }
+        } elseif ($data->ResultCode == 'BW-HTTP-100300') {
+            // TODO: make this a more general rule for string codes
+            $real_data['result_code'] = -1;
         }
         $callback = MpesaStkCallback::create($real_data);
         $this->fireStkEvent($callback, get_object_vars($data));
