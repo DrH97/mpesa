@@ -43,7 +43,7 @@ class MpesaRepository
                     $real_data[Str::snake($callback->Name)] = @$callback->Value;
                 }
             }
-        } elseif ($data->ResultCode == 'BW-HTTP-100300') {
+        } elseif (in_array($data->ResultCode, ['BW-HTTP-100300', 'BWENGINE-100029'])) {
             // TODO: make this a more general rule for string codes
             $real_data['result_code'] = -1;
         }

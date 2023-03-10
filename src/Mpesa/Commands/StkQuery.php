@@ -45,13 +45,13 @@ class StkQuery extends Command
         if (count($results['successful'])) {
             $this->info("Logging successful queries");
 
-            mpesaLogInfo('', $results['successful']);
+            mpesaLogInfo('-- Successful queries -- ', $results['successful']);
         }
 
         if (count($results['errors'])) {
             $this->info("Logging failed queries");
 
-            mpesaLogError('', $results['errors']);
+            mpesaLogError('-- Failed queries -- ', $results['errors']);
         }
 
         if (empty($results['successful']) && empty($results['errors'])) {
