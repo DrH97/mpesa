@@ -176,10 +176,17 @@ class MpesaRepository
                 $attributes = [
                     'merchant_request_id' => $status->MerchantRequestID,
                     'checkout_request_id' => $status->CheckoutRequestID,
-                    'result_code'         => $status->ResultCode,
-                    'result_desc'         => $status->ResultDesc,
-                    'amount'              => $item->amount,
+                    'result_code' => $status->ResultCode,
+                    'result_desc' => $status->ResultDesc,
+                    'amount' => $item->amount,
                 ];
+
+                if (in_array($status->ResultCode, ['BW-HTTP-100300', 'BWENGINE-100029'])) {
+                    // TODO: make this a more general rule for string codes
+                    $attributes['result_code'] = -1;
+                    $attributes['result_desc'] .= $status->ResultCode;
+                }
+
                 $success[$item->checkout_request_id] = $status->ResultDesc;
                 $callback = MpesaStkCallback::create($attributes);
                 $this->fireStkEvent($callback, get_object_vars($status));
