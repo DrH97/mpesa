@@ -14,43 +14,32 @@ jobs:
       matrix:
         operating-system: [ ubuntu-latest ]
         php-versions: [ '8.0', '8.1', '8.2' ]
-        laravel: [ '9', '10' ]
 
     name: P${{ matrix.php-versions }} - L${{ matrix.laravel }} - ${{ matrix.operating-system}}
 
     steps:
-      - uses: actions/checkout@v2
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Validate composer.json and composer.lock
+        run: composer validate --strict
+
       - name: Install PHP versions
         uses: shivammathur/setup-php@v2
         with:
           php-version: ${{ matrix.php-versions }}
-      - name: Get Composer Cache Directory 2
+
+      - name: Cache Composer packages
         id: composer-cache
-        run: |
-          echo "::set-output name=dir::$(composer config cache-files-dir)"
-      - uses: actions/cache@v2
-        id: actions-cache
-        with:
-          path: ${{ steps.composer-cache.outputs.dir }}
-          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-composer-
-      - name: Cache PHP dependencies
-        uses: actions/cache@v2
-        id: vendor-cache
+        uses: actions/cache@v3
         with:
           path: vendor
-          key: ${{ runner.OS }}-build-${{ hashFiles('**/composer.lock') }}
-      - name: Install Dependencies
-        if: steps.vendor-cache.outputs.cache-hit != 'true'
-        run: composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
+          key: ${{ runner.os }}-php-${{ hashFiles('**/composer.json') }}
+          restore-keys: |
+            ${{ runner.os }}-php-
 
-      - name: Update Dependencies with latest stable
-        if: matrix.dependency-stability == 'prefer-stable'
-        run: composer update --prefer-stable
-      - name: Update Dependencies with lowest stable
-        if: matrix.dependency-stability == 'prefer-lowest'
-        run: composer update --prefer-stable --prefer-lowest
+      - name: Install dependencies
+        run: composer install --prefer-dist --no-progress --optimize-autoloader
 
       # Code coverage
 
