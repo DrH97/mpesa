@@ -1,6 +1,5 @@
 <?php
 
-
 return [
     /*
      |------------------------------------------------------
@@ -161,6 +160,14 @@ return [
      */
     'sandbox_test_amount' => env('MPESA_SANDBOX_AMOUNT', 1),
 
+    /*
+   |--------------------------------------------------------------------------
+   | Logging
+   |--------------------------------------------------------------------------
+   |
+   | Whether to log in the library
+   |
+   */
     'logging' => [
         'enabled' => env('MPESA_ENABLE_LOGGING', false),
         'channels' => [

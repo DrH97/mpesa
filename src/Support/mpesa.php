@@ -9,6 +9,7 @@ use DrH\Mpesa\Library\MpesaAccount;
 use DrH\Mpesa\Library\Simulate;
 use Illuminate\Support\Facades\Log;
 use Psr\Log\LoggerInterface;
+
 use function DeepCopy\deep_copy;
 
 if (!function_exists('mpesa_balance')) {
@@ -48,8 +49,7 @@ if (!function_exists('mpesa_request')) {
         $reference = null,
         $description = null,
         MpesaAccount $account = null
-    ): MpesaStkRequest
-    {
+    ): MpesaStkRequest {
         return STK::push($amount, $phone, $reference, $description, $account);
     }
 }
@@ -60,18 +60,19 @@ if (!function_exists('mpesa_simulate')) {
     }
 }
 
-if (!function_exists('shouldLog')) {
-    function shouldLog(): bool
+if (!function_exists('shouldMpesaLog')) {
+    function shouldMpesaLog(): bool
     {
         return config('drh.mpesa.logging.enabled') == true;
     }
 }
 
-if (!function_exists('getLogger')) {
-    function getLogger(): LoggerInterface
+if (!function_exists('getMpesaLogger')) {
+    function getMpesaLogger(): LoggerInterface
     {
-        if (shouldLog()) {
+        if (shouldMpesaLog()) {
             $channels = [];
+
             foreach (config('drh.mpesa.logging.channels') as $rawChannel) {
                 if (is_string($rawChannel)) {
                     $channels[] = $rawChannel;
@@ -79,6 +80,7 @@ if (!function_exists('getLogger')) {
                     $channels[] = Log::build($rawChannel);
                 }
             }
+
             return Log::stack($channels);
         }
 
@@ -93,7 +95,7 @@ if (!function_exists('mpesaLog')) {
     function mpesaLog(string $level, string|array $message, array $context = []): void
     {
         $message = '[LIB - MPESA]: ' . $message;
-        getLogger()->log($level, $message, $context);
+        getMpesaLogger()->log($level, $message, $context);
     }
 }
 
@@ -101,7 +103,7 @@ if (!function_exists('mpesaLogError')) {
     function mpesaLogError(string|array $message, array $context = []): void
     {
         $message = '[LIB - MPESA]: ' . $message;
-        getLogger()->error($message, $context);
+        getMpesaLogger()->error($message, $context);
     }
 }
 
@@ -109,7 +111,7 @@ if (!function_exists('mpesaLogInfo')) {
     function mpesaLogInfo(string|array $message, array $context = []): void
     {
         $message = '[LIB - MPESA]: ' . $message;
-        getLogger()->info($message, $context);
+        getMpesaLogger()->info($message, $context);
     }
 }
 
