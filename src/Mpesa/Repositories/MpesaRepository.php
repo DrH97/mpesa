@@ -89,7 +89,7 @@ class MpesaRepository
         $data['msisdn'] = $data['m_s_i_s_d_n'];
         unset($data['m_s_i_s_d_n']);
 
-        mpesaLogInfo('createCallback', $data);
+        mpesaLogInfo(' C2B record ', $data);
 
         $callback = MpesaC2bCallback::create($data);
         event(new C2bConfirmationEvent($callback, $data));

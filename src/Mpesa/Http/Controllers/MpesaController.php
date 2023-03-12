@@ -42,7 +42,7 @@ class MpesaController extends Controller
      */
     public function b2cResult(Request $request): JsonResponse
     {
-        mpesaLogInfo('B2C CB: ', [$request]);
+        mpesaLogInfo('B2C CB: ', $request->all());
 
         $this->repository->handleResult();
         return response()->json(
@@ -66,7 +66,7 @@ class MpesaController extends Controller
      */
     public function stkCallback(Request $request): JsonResponse
     {
-        mpesaLogInfo('STK CB: ', [$request]);
+        mpesaLogInfo('STK CB: ', $request->all());
 
         // TODO: Add to try catch and always return success response - do for all entry points
         $this->repository->processStkPushCallback(json_encode($request->Body));
@@ -102,7 +102,7 @@ class MpesaController extends Controller
      */
     public function c2bConfirmation(Request $request): JsonResponse
     {
-        mpesaLogInfo('C2B CB: ', [$request]);
+        mpesaLogInfo('C2B CB: ', $request->all());
 
         $this->repository->processC2bConfirmation($request->all());
         $resp = [
