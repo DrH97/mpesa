@@ -14,7 +14,7 @@ class C2bPaymentConfirmation
     {
         $c2b = $event->c2bCallback;
         //Try to check if this was from STK
-        $request = MpesaStkRequest::whereReference($c2b->BillRefNumber)->first();
+        $request = MpesaStkRequest::whereReference($c2b->bill_ref_number)->first();
 
         mpesaLogInfo('C2B Listener: ', [$c2b, $event->apiJsonData, $request]);
     }
