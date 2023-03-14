@@ -14,6 +14,7 @@ use DrH\Mpesa\Events\StkPushPaymentFailedEvent;
 use DrH\Mpesa\Events\StkPushPaymentSuccessEvent;
 use Exception;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 use JetBrains\PhpStorm\ArrayShape;
@@ -164,7 +165,9 @@ class MpesaRepository
     public function queryStkStatus(): array
     {
         /** @var MpesaStkRequest[] $stk */
-        $stk = MpesaStkRequest::whereDoesntHave('response')->get();
+        $stk = MpesaStkRequest::whereDoesntHave('response')
+            ->whereDate('created_at', Carbon::today()->subMonths(3))
+            ->get();
         $success = $errors = [];
         foreach ($stk as $item) {
             try {
