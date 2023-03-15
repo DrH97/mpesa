@@ -166,7 +166,7 @@ class MpesaRepository
     {
         /** @var MpesaStkRequest[] $stk */
         $stk = MpesaStkRequest::whereDoesntHave('response')
-            ->whereDate('created_at', Carbon::today()->subMonths(3))
+            ->whereDate('created_at', '>', Carbon::today()->subMonths(3))
             ->get();
         $success = $errors = [];
         foreach ($stk as $item) {
