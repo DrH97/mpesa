@@ -19,12 +19,13 @@ class MpesaAccount
      *
      */
     public function __construct(
-        public string $shortcode,
-        public string $key,
-        public string $secret,
-        public string $passkey,
-        public bool   $sandbox = false,
-        public string $type = self::PAYBILL,
+        public string  $shortcode,
+        public string  $key,
+        public string  $secret,
+        public string  $passkey,
+        public ?string $partyB = null,
+        public bool    $sandbox = false,
+        public string  $type = self::PAYBILL,
     ) {
     }
 }

@@ -99,16 +99,18 @@ class StkPush extends ApiCore
 
             $transactionType = $account->type == MpesaAccount::TILL
                 ? "CustomerBuyGoodsOnline" : "CustomerPayBillOnline";
+
+            $partyB = $account->partyB;
         } else {
             $shortCode = config('drh.mpesa.c2b.short_code');
             $passkey = config('drh.mpesa.c2b.passkey');
 
             $transactionType = config('drh.mpesa.c2b.transaction_type');
+
+            $partyB = config('drh.mpesa.c2b.party_b');
         }
 
         $callback = config('drh.mpesa.c2b.stk_callback');
-
-        $partyB = config('drh.mpesa.c2b.party_b');
 
         $password = base64_encode($shortCode . $passkey . $time);
         $good_phone = $this->formatPhoneNumber($number ?: $this->number);

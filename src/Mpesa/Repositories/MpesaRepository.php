@@ -44,9 +44,10 @@ class MpesaRepository
                     $real_data[Str::snake($callback->Name)] = @$callback->Value;
                 }
             }
-        } elseif (in_array($data->ResultCode, ['BW-HTTP-100300', 'BWENGINE-100029'])) {
+        } elseif (!is_numeric($data->ResultCode)) {
             // TODO: make this a more general rule for string codes
             $real_data['result_code'] = -1;
+            $real_data['result_desc'] .= ' - ' . $data->ResultCode;
         }
         $callback = MpesaStkCallback::create($real_data);
         $this->fireStkEvent($callback, get_object_vars($data));
@@ -184,10 +185,9 @@ class MpesaRepository
                     'amount' => $item->amount,
                 ];
 
-                if (in_array($status->ResultCode, ['BW-HTTP-100300', 'BWENGINE-100029'])) {
-                    // TODO: make this a more general rule for string codes
+                if (!is_numeric($status->ResultCode)) {
                     $attributes['result_code'] = -1;
-                    $attributes['result_desc'] .= $status->ResultCode;
+                    $attributes['result_desc'] .= ' - ' . $status->ResultCode;
                 }
 
                 $success[$item->checkout_request_id] = $status->ResultDesc;
