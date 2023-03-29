@@ -59,7 +59,7 @@ class Authenticator
         try {
             $response = $this->makeRequest();
             $body = json_decode($response->getBody());
-            mpesaLogInfo('-- AUTH RES --', $body);
+            mpesaLogInfo('-- AUTH RES --', [$body]);
 
             $this->saveCredentials($body);
 
