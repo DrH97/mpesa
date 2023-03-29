@@ -59,7 +59,10 @@ class Authenticator
         try {
             $response = $this->makeRequest();
             $body = json_decode($response->getBody());
+            mpesaLogInfo('-- AUTH RES --', $body);
+
             $this->saveCredentials($body);
+
             return $body->access_token;
         } catch (RequestException $exception) {
             mpesaLogError($exception->getMessage());
@@ -151,6 +154,6 @@ class Authenticator
      */
     private function saveCredentials(mixed $credentials): void
     {
-        Cache::put($this->credentials, $credentials->access_token, 30);
+        Cache::put($this->credentials, $credentials->access_token, 3590);
     }
 }
