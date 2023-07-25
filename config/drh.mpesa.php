@@ -109,7 +109,7 @@ return [
       | B2C array
       |--------------------------------------------------------------------------
       |
-      | If you are sending payments to customers or b2b
+      | If you are sending payments to customers
       |
       */
     'b2c' => [
@@ -131,6 +131,52 @@ return [
         * https://org.ke.m-pesa.com/
         */
         'initiator' => env('MPESA_B2C_INITIATOR', 'apiop37'),
+        /*
+         * The user security credential.
+         * Go to https://developer.safaricom.co.ke/test_credentials and paste your initiator password to generate
+         * security credential
+         */
+        'security_credential' => 'GXiVXirQFaJvEFOQyn+VJ4Gp3Ccvpoq6aqzFiNgvH18UMU59Qxc+UTAX7Blzo6L0+tQG2wUJ1fKH4YlPagt' .
+            'zDHT37796uu0NysS85uPjxZMjnbGhPNeHnhJLzwyrjppl8mZpnmVg4CaVrEdcriuyifKIiF1hmc0A/RnjBMzY6yevbIV0kAgrn5cDvCN' .
+            '99O1rr1nl69GaVbP7a/6AWnRkVUldnalQmqQhfgLbOdxjGOVGU2arqjuvgQ6glo1uK9PUnp3UH2Vv66Lu99JglWyjlcWufZhJXUmFFB9' .
+            'tfoKAX2URnPGi4PvvJ6OgJNdsJmTsevnG2c/KKOa45rzdvwrwKA==',
+        /*
+         * Notification URL for timeout
+         */
+        'timeout_url' => env('APP_URL') . '/payments/callbacks/timeout/',
+        /**
+         * Result URL
+         */
+        'result_url' => env('APP_URL') . '/payments/callbacks/result/',
+    ],
+
+    /*
+      |--------------------------------------------------------------------------
+      | B2B array
+      |--------------------------------------------------------------------------
+      |
+      | If you are sending payments to b2b
+      |
+      */
+    'b2b' => [
+        /*
+         * Sending app consumer key
+         */
+        'consumer_key' => env('MPESA_B2B_KEY'),
+        /*
+         * Sending app consumer secret
+         */
+        'consumer_secret' => env('MPESA_B2B_SECRET'),
+        /*
+         * Shortcode sending funds
+         */
+        'short_code' => env('MPESA_B2B_SHORTCODE', '600584'),
+        /*
+        * This is the user initiating the transaction, usually from the Mpesa organization portal
+        * Make sure this was the user who was used to 'GO LIVE'
+        * https://org.ke.m-pesa.com/
+        */
+        'initiator' => env('MPESA_B2B_INITIATOR', 'apiop37'),
         /*
          * The user security credential.
          * Go to https://developer.safaricom.co.ke/test_credentials and paste your initiator password to generate

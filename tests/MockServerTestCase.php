@@ -179,6 +179,98 @@ abstract class MockServerTestCase extends TestCase
                     ]
                 ]
             ]
+        ],
+        'b2b' => [
+            'response' => [
+                "OriginatorConversationID" => "5118-111210482-1",
+                "ConversationID" => "AG_20230420_2010759fd5662ef6d054",
+                "ResponseCode" => "0",
+                "ResponseDescription" => "Accept the service request successfully."
+            ],
+            'result' => [
+                'success' => [
+                    "Result" => [
+                        "ResultType" => 0,
+                        "ResultCode" => 0,
+                        "ResultDesc" => "The service request is processed successfully.",
+                        "OriginatorConversationID" => "10571-7910404-1",
+                        "ConversationID" => "AG_20191219_00004e48cf7e3533f581",
+                        "TransactionID" => "NLJ41HAY6Q",
+                        "ResultParameters" => [
+                            "ResultParameter" => [
+                                [
+                                    "Key" => "DebitAccountBalance",
+                                    "Value" => "{Amount={CurrencyCode=KES, MinimumAmount=618683, BasicAmount=6186.83}}"
+                                ],
+                                [
+                                    "Key" => "Amount",
+                                    "Value" => "190.00"
+                                ],
+                                [
+                                    "Key" => "DebitPartyAffectedAccountBalance",
+                                    "Value" => "Working Account|KES|346568.83|6186.83|340382.00|0.00"
+                                ],
+                                [
+                                    "Key" => "TransCompletedTime",
+                                    "Value" => "20221110110717"
+                                ],
+                                [
+                                    "Key" => "DebitPartyCharges",
+                                    "Value" => ""
+                                ],
+                                [
+                                    "Key" => "ReceiverPartyPublicName",
+                                    "Value" => "000000– Biller Companty"
+                                ],
+                                [
+                                    "Key" => "Currency",
+                                    "Value" => "KES"
+                                ],
+                                [
+                                    "Key" => "InitiatorAccountCurrentBalance",
+                                    "Value" => "{Amount={CurrencyCode=KES, MinimumAmount=618683, BasicAmount=6186.83}}"
+                                ]
+                            ]
+                        ],
+                        "ReferenceData" => [
+                            "ReferenceItem" => [
+                                [
+                                    "Key" => "BillReferenceNumber",
+                                    "Value" => "19008"
+                                ],
+                                [
+                                    "Key" => "QueueTimeoutURL",
+                                    "Value" => "http://172.31.234.68:8888/Listener.php"
+                                ],
+                            ]
+                        ]
+                    ]
+                ],
+                'error' => [
+                    "Result" => [
+                        "ResultType" => 0,
+                        "ResultCode" => 2001,
+                        "ResultDesc" => "The initiator information is invalid.",
+                        "OriginatorConversationID" => "12337-23509183-5",
+                        "ConversationID" => "AG_20200120_0000657265d5fa9ae5c0",
+                        "TransactionID" => "OAK0000000",
+                        "ResultParameters" => [
+                            "ResultParameter" => [
+                                [
+                                    "Key" => "BOCompletedTime",
+                                    "Value" => "20200120164825",
+                                ]
+                            ],
+                        ],
+                        "ReferenceData" => [
+                            "ReferenceItem" => [
+                                "Key" => "QueueTimeoutURL",
+                                "Value" => "https://internalapi.safaricom.co.ke/mpesa/abresults/v1/submit"
+                            ]
+                        ]
+                    ]
+                ]
+            ]
         ]
     ];
 }

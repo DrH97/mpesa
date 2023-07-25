@@ -18,6 +18,45 @@ class MpesaController extends Controller
     }
 
     ######################################################################################
+    #   B2B Callbacks
+
+    /**
+     * @param Request $request
+     * @param string|null $initiator
+     * @return JsonResponse
+     */
+    public function b2bTimeout(Request $request, string $initiator = null): JsonResponse
+    {
+        event(new QueueTimeoutEvent($request, $initiator));
+        return response()->json(
+            [
+                'ResponseCode' => '00000000',
+                'ResponseDesc' => 'success'
+            ]
+        );
+    }
+
+    /**
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function b2bResult(Request $request): JsonResponse
+    {
+        mpesaLogInfo('B2B CB: ', $request->all());
+
+        $this->repository->handleB2bResult();
+        return response()->json(
+            [
+                'ResponseCode' => '00000000',
+                'ResponseDesc' => 'success'
+            ]
+        );
+    }
+
+    #   B2C Callbacks
+    ######################################################################################
+
+    ######################################################################################
     #   B2C Callbacks
 
     /**
@@ -44,7 +83,7 @@ class MpesaController extends Controller
     {
         mpesaLogInfo('B2C CB: ', $request->all());
 
-        $this->repository->handleResult();
+        $this->repository->handleB2cResult();
         return response()->json(
             [
                 'ResponseCode' => '00000000',

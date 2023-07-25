@@ -9,6 +9,7 @@ use DrH\Mpesa\Exceptions\ExternalServiceException;
 use Exception;
 use GuzzleHttp\Exception\GuzzleException;
 use GuzzleHttp\Exception\RequestException;
+
 use function config;
 
 class BulkSender extends ApiCore
@@ -73,7 +74,7 @@ class BulkSender extends ApiCore
             'ResultURL' => config('drh.mpesa.b2c.result_url') . 'b2c',
             'Occasion' => ' '
         ];
-        $this->bulk = true;
+        $this->service = 'b2c';
 
         $response = $this->sendRequest($body, 'b2c');
         return $this->mpesaRepository->saveB2cRequest((object)$response, $body);

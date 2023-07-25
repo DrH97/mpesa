@@ -10,6 +10,7 @@ use GuzzleHttp\Exception\GuzzleException;
 use GuzzleHttp\Exception\RequestException;
 use Illuminate\Support\Facades\Cache;
 use Psr\Http\Message\ResponseInterface;
+
 use function base64_encode;
 use function config;
 use function json_decode;
@@ -19,7 +20,7 @@ class Authenticator
 {
     protected string $endpoint;
 
-    public bool $alt = false;
+    public string $service = 'c2b';
 
     private string $credentials;
 
@@ -41,21 +42,21 @@ class Authenticator
     }
 
     /**
-     * @param bool $bulk
+     * @param string $service
      * @param MpesaAccount|null $account
      * @return string|null
-     * @throws ClientException|ExternalServiceException
+     * @throws ClientException
+     * @throws ExternalServiceException
      * @throws GuzzleException
      */
-    public function authenticate(bool $bulk = false, MpesaAccount $account = null): ?string
+    public function authenticate(string $service = 'c2b', MpesaAccount $account = null): ?string
     {
-        if ($bulk) {
-            $this->alt = true;
-        }
+        $this->service = $service;
+
         $this->generateCredentials($account);
-        if (config('drh.mpesa.cache_credentials', false) && !empty($key = $this->getFromCache())) {
-            return $key;
-        }
+//        if (config('drh.mpesa.cache_credentials', false) && !empty($key = $this->getFromCache())) {
+//            return $key;
+//        }
         try {
             $response = $this->makeRequest();
             $body = json_decode($response->getBody());
@@ -74,7 +75,7 @@ class Authenticator
                 $this->retries--;
                 // TODO: Implement exponential back-off
                 sleep($this->retryWaitTime);
-                return $this->authenticate($bulk, $account);
+                return $this->authenticate($service, $account);
             }
             mpesaLog('CRITICAL', $exception->getMessage());
             throw new ExternalServiceException('Mpesa Server Auth Error');
@@ -109,13 +110,8 @@ class Authenticator
             $key = $account->key;
             $secret = $account->secret;
         } else {
-            $key = config('drh.mpesa.c2b.consumer_key');
-            $secret = config('drh.mpesa.c2b.consumer_secret');
-            if ($this->alt) {
-                //lazy way to switch to a different app in case of bulk
-                $key = config('drh.mpesa.b2c.consumer_key');
-                $secret = config('drh.mpesa.b2c.consumer_secret');
-            }
+            $key = config("drh.mpesa.$this->service.consumer_key");
+            $secret = config("drh.mpesa.$this->service.consumer_secret");
         }
 
         $this->credentials = base64_encode($key . ':' . $secret);

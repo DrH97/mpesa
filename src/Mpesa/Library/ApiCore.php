@@ -11,12 +11,13 @@ use GuzzleHttp\Exception\GuzzleException;
 use GuzzleHttp\Exception\RequestException;
 use Illuminate\Support\Str;
 use Psr\Http\Message\ResponseInterface;
+
 use function config;
 use function strlen;
 
 class ApiCore
 {
-    public bool $bulk = false;
+    public string $service = 'c2b';
 
     public string $bearer;
 
@@ -75,9 +76,9 @@ class ApiCore
     private function makeRequest(array $body, string $endpoint, MpesaAccount $account = null): ResponseInterface
     {
         if (config('drh.mpesa.multi_tenancy', false)) {
-            $this->bearer = $this->engine->auth->authenticate($this->bulk, $account);
+            $this->bearer = $this->engine->auth->authenticate($this->service, $account);
         } else {
-            $this->bearer = $this->engine->auth->authenticate($this->bulk);
+            $this->bearer = $this->engine->auth->authenticate($this->service);
         }
 
         return $this->engine->client->request(

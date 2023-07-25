@@ -1,7 +1,9 @@
 <?php
 
+use DrH\Mpesa\Entities\MpesaB2bRequest;
 use DrH\Mpesa\Entities\MpesaBulkPaymentRequest;
 use DrH\Mpesa\Entities\MpesaStkRequest;
+use DrH\Mpesa\Facades\B2B;
 use DrH\Mpesa\Facades\Bulk;
 use DrH\Mpesa\Facades\Identity;
 use DrH\Mpesa\Facades\STK;
@@ -57,6 +59,18 @@ if (!function_exists('mpesa_simulate')) {
     function mpesa_simulate($phone, $amount): array
     {
         return app(Simulate::class)->push($phone, $amount);
+    }
+}
+
+if (!function_exists('mpesa_b2b')) {
+    function mpesa_b2b(
+        string $type,
+        int $shortcode,
+        int $amount,
+        string $reference,
+        string $phone
+    ): MpesaB2bRequest {
+        return B2B::pay($type, $shortcode, $amount, $reference, $phone);
     }
 }
 

@@ -2,11 +2,14 @@
 
 namespace DrH\Mpesa\Repositories;
 
+use DrH\Mpesa\Entities\MpesaB2bCallback;
 use DrH\Mpesa\Entities\MpesaBulkPaymentRequest;
 use DrH\Mpesa\Entities\MpesaBulkPaymentResponse;
 use DrH\Mpesa\Entities\MpesaC2bCallback;
 use DrH\Mpesa\Entities\MpesaStkCallback;
 use DrH\Mpesa\Entities\MpesaStkRequest;
+use DrH\Mpesa\Events\B2bPaymentFailedEvent;
+use DrH\Mpesa\Events\B2bPaymentSuccessEvent;
 use DrH\Mpesa\Events\B2cPaymentFailedEvent;
 use DrH\Mpesa\Events\B2cPaymentSuccessEvent;
 use DrH\Mpesa\Events\C2bConfirmationEvent;
@@ -55,20 +58,20 @@ class MpesaRepository
     }
 
     /**
-     * @param       $response
+     * @param object $response
      * @param array $body
      * @return MpesaBulkPaymentRequest
      */
     public function saveB2cRequest(object $response, array $body = []): MpesaBulkPaymentRequest
     {
         return MpesaBulkPaymentRequest::create([
-            'conversation_id'            => $response->ConversationID,
+            'conversation_id' => $response->ConversationID,
             'originator_conversation_id' => $response->OriginatorConversationID,
-            'amount'                     => $body['Amount'],
-            'phone'                      => $body['PartyB'],
-            'remarks'                    => $body['Remarks'],
-            'command_id'                 => $body['CommandID'],
-            'relation_id'                => Auth::id(),
+            'amount' => $body['Amount'],
+            'phone' => $body['PartyB'],
+            'remarks' => $body['Remarks'],
+            'command_id' => $body['CommandID'],
+            'relation_id' => Auth::id(),
         ]);
     }
 
@@ -102,7 +105,7 @@ class MpesaRepository
     /**
      * @return MpesaBulkPaymentResponse
      */
-    private function handleB2cResult(): MpesaBulkPaymentResponse
+    public function handleB2cResult(): MpesaBulkPaymentResponse
     {
         $data = request('Result');
 
@@ -112,11 +115,11 @@ class MpesaRepository
         }
 
         $common = [
-            'result_type'     => $data['ResultType'],
-            'result_code'     => $data['ResultCode'],
-            'result_desc'     => $data['ResultDesc'],
+            'result_type' => $data['ResultType'],
+            'result_code' => $data['ResultCode'],
+            'result_desc' => $data['ResultDesc'],
             'conversation_id' => $data['ConversationID'],
-            'transaction_id'  => $data['TransactionID']
+            'transaction_id' => $data['TransactionID']
         ];
         $seek = ['originator_conversation_id' => $data['OriginatorConversationID']];
 
@@ -127,7 +130,7 @@ class MpesaRepository
         }
         $resultParameter = $data['ResultParameters'];
 
-        $data['ResultParameters'] = json_encode($resultParameter);
+//        $data['ResultParameters'] = json_encode($resultParameter);
         $response = MpesaBulkPaymentResponse::updateOrCreate($seek, $common);
         $this->saveResultParams($resultParameter, $response);
         event(new B2cPaymentSuccessEvent($response, [...$common, ...$seek]));
@@ -151,13 +154,54 @@ class MpesaRepository
         $response->result()->create($new_params);
     }
 
-    /**
-     * @return MpesaBulkPaymentResponse
-     */
-    public function handleResult(): MpesaBulkPaymentResponse
+    public function handleB2bResult(): MpesaB2bCallback
     {
-        return $this->handleB2cResult();
+        $data = request('Result');
+
+        //check if data is an array
+        if (!is_array($data)) {
+            $data->toArray();
+        }
+
+        $common = [
+            'result_type' => $data['ResultType'],
+            'result_code' => $data['ResultCode'],
+            'result_desc' => $data['ResultDesc'],
+            'originator_conversation_id' => $data['OriginatorConversationID'],
+            'transaction_id' => $data['TransactionID']
+        ];
+        $seek = ['conversation_id' => $data['ConversationID']];
+
+        if ($common['result_code'] !== 0) {
+            $response = MpesaB2bCallback::updateOrCreate($seek, $common);
+            event(new B2bPaymentFailedEvent($response, [...$common, ...$seek]));
+            return $response;
+        }
+        $resultParameters = $data['ResultParameters'];
+
+        $response = MpesaB2bCallback::updateOrCreate($seek, $common);
+        $this->saveB2bResultParams($resultParameters, $response);
+        event(new B2bPaymentSuccessEvent($response, [...$common, ...$seek]));
+        return $response;
     }
+
+    private function saveB2bResultParams(array $params, MpesaB2bCallback $response): void
+    {
+        $params_payload = $params['ResultParameter'];
+        $new_params = Arr::pluck($params_payload, 'Value', 'Key');
+
+        $toSnakeCase = fn(string $k, ?string $v): array => [
+            strtolower(preg_replace(
+                '/(?<!^)[A-Z]/',
+                '_$0',
+                $k
+            )) => $v
+        ];
+        $new_params = array_merge(...array_map($toSnakeCase, array_keys($new_params), array_values($new_params)));
+
+        $response->update($new_params);
+    }
+
 
     /**
      * @return array
@@ -202,7 +246,7 @@ class MpesaRepository
 
     /**
      * @param MpesaStkCallback $stkCallback
-     * @param array            $response
+     * @param array $response
      * @return void
      */
     private function fireStkEvent(MpesaStkCallback $stkCallback, array $response): void

@@ -9,6 +9,7 @@ use DrH\Mpesa\Events\C2bConfirmationEvent;
 use DrH\Mpesa\Events\StkPushPaymentFailedEvent;
 use DrH\Mpesa\Events\StkPushPaymentSuccessEvent;
 use DrH\Mpesa\Http\Middlewares\MpesaCors;
+use DrH\Mpesa\Library\B2BPayment;
 use DrH\Mpesa\Library\BulkSender;
 use DrH\Mpesa\Library\C2bRegister;
 use DrH\Mpesa\Library\Core;
@@ -29,7 +30,7 @@ class MpesaServiceProvider extends ServiceProvider
      * @return void
      * @throws Exceptions\ClientException
      */
-    public function register()
+    public function register(): void
     {
         $core = new Core(new Client());
         $this->app->bind(Core::class, function () use ($core) {
@@ -62,7 +63,7 @@ class MpesaServiceProvider extends ServiceProvider
     /**
      * Register facade accessors
      */
-    private function registerFacades()
+    private function registerFacades(): void
     {
         $this->app->bind(
             'mpesa_stk',
@@ -88,12 +89,18 @@ class MpesaServiceProvider extends ServiceProvider
                 return $this->app->make(BulkSender::class);
             }
         );
+        $this->app->bind(
+            'mpesa_b2b',
+            function () {
+                return $this->app->make(B2BPayment::class);
+            }
+        );
     }
 
     /**
      * Register events
      */
-    private function registerEvents()
+    private function registerEvents(): void
     {
         Event::listen(StkPushPaymentSuccessEvent::class, StkPaymentSuccessful::class);
         Event::listen(StkPushPaymentFailedEvent::class, StkPaymentFailed::class);
@@ -101,7 +108,7 @@ class MpesaServiceProvider extends ServiceProvider
         Event::listen(C2bConfirmationEvent::class, C2bPaymentConfirmation::class);
     }
 
-    private function requireHelperScripts()
+    private function requireHelperScripts(): void
     {
         $files = glob(__DIR__ . '/../Support/*.php');
         foreach ($files as $file) {
