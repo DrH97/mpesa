@@ -11,6 +11,7 @@ class B2BPayment extends ApiCore
 {
     public const PAYBILL = 'BusinessPayBill';
     public const TILL = 'BusinessBuyGoods';
+    public const STORE = 'BusinessToBusinessTransfer';
 
     /**
      * @throws GuzzleException
