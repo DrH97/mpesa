@@ -65,7 +65,7 @@ if (!function_exists('mpesa_simulate')) {
 if (!function_exists('mpesa_b2b')) {
     function mpesa_b2b(
         string $type,
-        int $shortcode,
+        string $shortcode,
         int $amount,
         string $reference,
         string $phone

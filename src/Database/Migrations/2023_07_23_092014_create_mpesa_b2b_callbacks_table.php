@@ -23,6 +23,7 @@ class CreateMpesaB2bCallbacksTable extends Migration
             $table->string('transaction_id')->unique();
 
             // result params
+            $table->string('debit_account_balance')->nullable();
             $table->string('debit_account_current_balance')->nullable();
             $table->decimal('amount')->nullable();
             $table->string('debit_party_affected_account_balance')->nullable();
