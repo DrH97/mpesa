@@ -24,7 +24,6 @@ class CreateMpesaB2bCallbacksTable extends Migration
 
             // result params
             $table->string('debit_account_balance')->nullable();
-            $table->string('debit_account_current_balance')->nullable();
             $table->decimal('amount')->nullable();
             $table->string('debit_party_affected_account_balance')->nullable();
             $table->string('trans_completed_time')->nullable();
