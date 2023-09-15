@@ -33,6 +33,11 @@ class CreateMpesaB2bCallbacksTable extends Migration
             $table->string('currency')->nullable();
             $table->string('initiator_account_current_balance')->nullable();
 
+            $table->string('debit_account_current_balance')->nullable();
+            $table->string('credit_account_balance')->nullable();
+            $table->string('debit_party_public_name')->nullable();
+            $table->string('credit_party_public_name')->nullable();
+
             $table->foreign('conversation_id')
                 ->references('conversation_id')
                 ->on('mpesa_b2b_requests')->onDelete('restrict')->onUpdate('restrict');
