@@ -18,7 +18,7 @@ class B2BPayment extends ApiCore
      * @throws ClientException
      * @throws ExternalServiceException
      */
-    public function pay(string $type, int $shortcode, int $amount, string $reference, string $phone): MpesaB2bRequest
+    public function pay(string $type, string $shortcode, int $amount, string $reference, string $phone): MpesaB2bRequest
     {
         $body = [
             'Initiator' => config('drh.mpesa.b2b.initiator'),
