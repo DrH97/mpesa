@@ -20,7 +20,7 @@ class CreateMpesaB2bCallbacksTable extends Migration
             $table->string('result_desc');
             $table->string('originator_conversation_id');
             $table->string('conversation_id');
-            $table->string('transaction_id')->unique();
+            $table->string('transaction_id');
 
             // result params
             $table->string('debit_account_balance')->nullable();
