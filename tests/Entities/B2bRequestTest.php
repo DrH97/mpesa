@@ -4,8 +4,6 @@ namespace DrH\Mpesa\Tests\Entities;
 
 use DrH\Mpesa\Entities\MpesaB2bCallback;
 use DrH\Mpesa\Entities\MpesaB2bRequest;
-use DrH\Mpesa\Entities\MpesaBulkPaymentRequest;
-use DrH\Mpesa\Entities\MpesaBulkPaymentResponse;
 use DrH\Mpesa\Tests\TestCase;
 
 class B2bRequestTest extends TestCase

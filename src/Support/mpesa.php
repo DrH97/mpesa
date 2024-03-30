@@ -11,7 +11,6 @@ use DrH\Mpesa\Library\MpesaAccount;
 use DrH\Mpesa\Library\Simulate;
 use Illuminate\Support\Facades\Log;
 use Psr\Log\LoggerInterface;
-
 use function DeepCopy\deep_copy;
 
 if (!function_exists('mpesa_balance')) {

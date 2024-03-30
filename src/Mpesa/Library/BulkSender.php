@@ -9,7 +9,6 @@ use DrH\Mpesa\Exceptions\ExternalServiceException;
 use Exception;
 use GuzzleHttp\Exception\GuzzleException;
 use GuzzleHttp\Exception\RequestException;
-
 use function config;
 
 class BulkSender extends ApiCore
