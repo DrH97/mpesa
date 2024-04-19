@@ -3,11 +3,13 @@
 namespace DrH\Mpesa\Repositories;
 
 use DrH\Mpesa\Entities\MpesaB2bCallback;
+use DrH\Mpesa\Entities\MpesaB2bRequest;
 use DrH\Mpesa\Entities\MpesaBulkPaymentRequest;
 use DrH\Mpesa\Entities\MpesaBulkPaymentResponse;
 use DrH\Mpesa\Entities\MpesaC2bCallback;
 use DrH\Mpesa\Entities\MpesaStkCallback;
 use DrH\Mpesa\Entities\MpesaStkRequest;
+use DrH\Mpesa\Entities\MpesaTransactionStatusCallback;
 use DrH\Mpesa\Events\B2bPaymentFailedEvent;
 use DrH\Mpesa\Events\B2bPaymentSuccessEvent;
 use DrH\Mpesa\Events\B2cPaymentFailedEvent;
@@ -15,6 +17,8 @@ use DrH\Mpesa\Events\B2cPaymentSuccessEvent;
 use DrH\Mpesa\Events\C2bConfirmationEvent;
 use DrH\Mpesa\Events\StkPushPaymentFailedEvent;
 use DrH\Mpesa\Events\StkPushPaymentSuccessEvent;
+use DrH\Mpesa\Events\TransactionStatusFailedEvent;
+use DrH\Mpesa\Events\TransactionStatusSuccessEvent;
 use Exception;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Carbon;
@@ -154,9 +158,9 @@ class MpesaRepository
         $response->result()->create($new_params);
     }
 
-    public function handleB2bResult(): MpesaB2bCallback
+    public function handleB2bResult($data): MpesaB2bCallback
     {
-        $data = request('Result');
+//        $data = request('Result');
 
         //check if data is an array
         if (!is_array($data)) {
@@ -209,8 +213,10 @@ class MpesaRepository
     #[ArrayShape(shape: ['successful' => "array", 'errors' => "array"])]
     public function queryStkStatus(): array
     {
+        // TODO: Change this to use WhereStatus = REQUESTED instead
         /** @var MpesaStkRequest[] $stk */
         $stk = MpesaStkRequest::whereDoesntHave('response')
+            ->whereStatus('REQUESTED')
             ->whereDate('created_at', '>', Carbon::today()->subMonths(3))
             ->get();
         $success = $errors = [];
@@ -259,18 +265,140 @@ class MpesaRepository
     }
 
 
-    public function queryBulkStatus(): array
+    public function queryB2cStatus(): array
     {
         $bulk = MpesaBulkPaymentResponse::whereDoesntHave('result')->get();
         $transactions = [];
         foreach ($bulk as $item) {
             try {
-                $status = (object)mpesa_bulk_status($item->transaction_id);
+                $status = (object)mpesa_b2c_status($item->transaction_id);
                 $transactions[$item->transaction_id] = $status->ResponseDescription;
             } catch (Exception $e) {
                 $transactions[$item->transaction_id] = $e->getMessage();
             }
         }
         return $transactions;
+    }
+
+
+    public function queryB2bStatus(): array
+    {
+        $b2b = MpesaB2bRequest::whereDoesntHave('response')->get();
+        $transactions = [];
+        foreach ($b2b as $item) {
+            try {
+                $status = mpesa_b2b_status($item);
+                $transactions[$item->conversation_id] = $status->ResponseDescription;
+            } catch (Exception $e) {
+                $transactions[$item->conversation_id] = $e->getMessage();
+            }
+        }
+        return $transactions;
+    }
+
+    public function processStatusCallback(): MpesaTransactionStatusCallback
+    {
+        $data = request('Result');
+
+        //check if data is an array
+        if (!is_array($data)) {
+            $data->toArray();
+        }
+
+        $common = [
+            'result_type' => $data['ResultType'],
+            'result_code' => $data['ResultCode'],
+            'result_desc' => $data['ResultDesc'],
+            'originator_conversation_id' => $data['OriginatorConversationID'],
+            'transaction_id' => $data['TransactionID']
+        ];
+        $seek = ['conversation_id' => $data['ConversationID']];
+
+        if ($common['result_code'] !== 0) {
+            $response = MpesaTransactionStatusCallback::updateOrCreate($seek, $common);
+            event(new TransactionStatusFailedEvent($response, $data));
+            return $response;
+        }
+        $resultParameters = $data['ResultParameters'];
+
+        $callback = MpesaTransactionStatusCallback::updateOrCreate($seek, $common);
+
+        $this->saveStatusResultParams($resultParameters, $callback);
+        event(new TransactionStatusSuccessEvent($callback, $data));
+
+        $this->processForB2b($callback);
+
+        return $callback;
+    }
+
+    private function saveStatusResultParams(array $params, MpesaTransactionStatusCallback $response): void
+    {
+        $params_payload = $params['ResultParameter'];
+        $new_params = Arr::pluck($params_payload, 'Value', 'Key');
+
+        $toSnakeCase = fn(string $k, ?string $v): array => [
+            strtolower(preg_replace(
+                '/(?<!^)[A-Z]/',
+                '_$0',
+                $k
+            )) => $v
+        ];
+        $new_params = array_merge(...array_map($toSnakeCase, array_keys($new_params), array_values($new_params)));
+
+        $new_params['result_originator_conversation_id'] = $new_params['originator_conversation_i_d'];
+        $new_params['result_conversation_id'] = $new_params['conversation_i_d'];
+        unset($new_params['originator_conversation_i_d'], $new_params['conversation_i_d']);
+
+        $response->update($new_params);
+    }
+
+    private function processForB2b(MpesaTransactionStatusCallback $callback): void
+    {
+        $b2bData = [
+            "ResultType" => 0,
+            "ResultCode" => 0,
+            "ResultDesc" => "The service request is processed successfully.",
+            "OriginatorConversationID" => $callback->result_originator_conversation_id,
+            "ConversationID" => $callback->result_conversation_id,
+            "TransactionID" => $callback->receipt_no,
+            "ResultParameters" => [
+                "ResultParameter" => [
+                    [
+                        "Key" => "DebitAccountBalance",
+                        "Value" => "{Amount={CurrencyCode=KES, MinimumAmount=0, BasicAmount=0.0}}"
+                    ],
+                    [
+                        "Key" => "Amount",
+                        "Value" => $callback->amount
+                    ],
+                    [
+                        "Key" => "DebitPartyAffectedAccountBalance",
+                        "Value" => "Working Account|KES|0.0|0.0|0.00|0.00"
+                    ],
+                    [
+                        "Key" => "TransCompletedTime",
+                        "Value" => $callback->finalised_time
+                    ],
+                    [
+                        "Key" => "DebitPartyCharges",
+                        "Value" => ""
+                    ],
+                    [
+                        "Key" => "ReceiverPartyPublicName",
+                        "Value" => $callback->credit_party_name
+                    ],
+                    [
+                        "Key" => "Currency",
+                        "Value" => "KES"
+                    ],
+                    [
+                        "Key" => "InitiatorAccountCurrentBalance",
+                        "Value" => "{Amount={CurrencyCode=KES, MinimumAmount=0, BasicAmount=0.0}}"
+                    ]
+                ]
+            ],
+        ];
+
+        $this->handleB2bResult($b2bData);
     }
 }

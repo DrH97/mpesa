@@ -44,7 +44,7 @@ class MpesaController extends Controller
     {
         mpesaLogInfo('B2B CB: ', $request->all());
 
-        $this->repository->handleB2bResult();
+        $this->repository->handleB2bResult($request->Result);
         return response()->json(
             [
                 'ResponseCode' => '00000000',
@@ -152,5 +152,27 @@ class MpesaController extends Controller
     }
 
     #   C2B Callbacks
+    ######################################################################################
+
+    ######################################################################################
+    #   Status Callbacks
+
+    /**
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function statusCallback(Request $request): JsonResponse
+    {
+        mpesaLogInfo('Status CB: ', $request->all());
+
+        $this->repository->processStatusCallback();
+        $resp = [
+            'ResultCode' => 0,
+            'ResultDesc' => 'Status Callback received successfully',
+        ];
+        return response()->json($resp);
+    }
+
+    #   Status Callbacks
     ######################################################################################
 }

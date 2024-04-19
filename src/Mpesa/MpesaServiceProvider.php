@@ -2,12 +2,14 @@
 
 namespace DrH\Mpesa;
 
+use DrH\Mpesa\Commands\B2bTransactionStatus;
+use DrH\Mpesa\Commands\B2cTransactionStatus;
 use DrH\Mpesa\Commands\C2bRegisterUrls;
 use DrH\Mpesa\Commands\StkQuery;
-use DrH\Mpesa\Commands\TransactionStatus;
 use DrH\Mpesa\Events\C2bConfirmationEvent;
 use DrH\Mpesa\Events\StkPushPaymentFailedEvent;
 use DrH\Mpesa\Events\StkPushPaymentSuccessEvent;
+use DrH\Mpesa\Events\TransactionStatusSuccessEvent;
 use DrH\Mpesa\Http\Middlewares\MpesaCors;
 use DrH\Mpesa\Library\B2BPayment;
 use DrH\Mpesa\Library\BulkSender;
@@ -18,6 +20,7 @@ use DrH\Mpesa\Library\StkPush;
 use DrH\Mpesa\Listeners\C2bPaymentConfirmation;
 use DrH\Mpesa\Listeners\StkPaymentFailed;
 use DrH\Mpesa\Listeners\StkPaymentSuccessful;
+use DrH\Mpesa\Listeners\TransactionStatusSuccessful;
 use GuzzleHttp\Client;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\ServiceProvider;
@@ -40,7 +43,8 @@ class MpesaServiceProvider extends ServiceProvider
             [
                 C2bRegisterUrls::class,
                 StkQuery::class,
-                TransactionStatus::class,
+                B2cTransactionStatus::class,
+                B2bTransactionStatus::class,
             ]
         );
 
@@ -49,7 +53,7 @@ class MpesaServiceProvider extends ServiceProvider
         $this->mergeConfigFrom(__DIR__ . '/../../config/drh.mpesa.php', 'drh.mpesa');
     }
 
-    public function boot()
+    public function boot(): void
     {
         $this->loadRoutesFrom(__DIR__ . '/Http/routes.php');
         $this->loadMigrationsFrom(__DIR__ . '/../Database/Migrations');
@@ -84,7 +88,7 @@ class MpesaServiceProvider extends ServiceProvider
             }
         );
         $this->app->bind(
-            'mpesa_bulk',
+            'mpesa_b2c',
             function () {
                 return $this->app->make(BulkSender::class);
             }
@@ -106,6 +110,8 @@ class MpesaServiceProvider extends ServiceProvider
         Event::listen(StkPushPaymentFailedEvent::class, StkPaymentFailed::class);
 
         Event::listen(C2bConfirmationEvent::class, C2bPaymentConfirmation::class);
+
+        Event::listen(TransactionStatusSuccessEvent::class, TransactionStatusSuccessful::class);
     }
 
     private function requireHelperScripts(): void

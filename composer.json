@@ -18,9 +18,11 @@
         "myclabs/deep-copy": "^1.11"
     },
     "require-dev": {
-        "orchestra/testbench": "^6.0",
+        "orchestra/testbench": "^8.0",
+        "pestphp/pest": "^2.5",
+        "pestphp/pest-plugin-laravel": "^2.0",
         "phpstan/phpstan": "^1.4",
-        "phpunit/phpunit": "^9.5",
+        "phpunit/phpunit": "^10.0",
         "squizlabs/php_codesniffer": "3.*"
     },
     "autoload": {
@@ -34,9 +36,9 @@
         }
     },
     "scripts": {
-        "test": "phpunit --testdox",
-        "test-coverage": "phpunit --coverage-clover coverage.xml",
-        "test-coverage-html": "phpunit --coverage-html coverage",
+        "test": "pest --testdox",
+        "test-coverage": "pest --coverage-clover coverage.xml",
+        "test-coverage-html": "pest --coverage-html coverage",
         "check-style": "phpcs -p --standard=PSR12 --runtime-set ignore_errors_on_exit 1 --runtime-set ignore_warnings_on_exit 1 src",
         "fix-style": "phpcbf -p --standard=PSR12 --runtime-set ignore_errors_on_exit 1 --runtime-set ignore_warnings_on_exit 1 src",
         "run-csa": "phpstan analyse src --level=4 --no-progress",
@@ -50,7 +52,7 @@
                 "DrH\\Mpesa\\MpesaServiceProvider"
             ],
             "aliases": {
-                "Bulk": "DrH\\Mpesa\\Facades\\Bulk",
+                "B2C": "DrH\\Mpesa\\Facades\\Bulk",
                 "Identity": "DrH\\Mpesa\\Facades\\Identity",
                 "Registrar": "DrH\\Mpesa\\Facades\\Registrar",
                 "STK": "DrH\\Mpesa\\Facades\\STK"
@@ -58,7 +60,10 @@
         }
     },
     "config": {
-        "sort-packages": true
+        "sort-packages": true,
+        "allow-plugins": {
+            "pestphp/pest-plugin": true
+        }
     },
     "authors": [
         {

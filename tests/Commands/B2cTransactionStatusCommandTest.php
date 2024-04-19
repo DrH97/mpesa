@@ -6,14 +6,14 @@ use DrH\Mpesa\Entities\MpesaBulkPaymentResponse;
 use DrH\Mpesa\Tests\MockServerTestCase;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
-class TransactionStatusCommandTest extends MockServerTestCase
+class B2cTransactionStatusCommandTest extends MockServerTestCase
 {
     use RefreshDatabase;
 
     /** @test */
-    function the_command_returns_nothing_text_when_no_pending_bulk_requests()
+    function the_command_returns_nothing_text_when_no_pending_b2c_requests()
     {
-        $this->artisan('mpesa:transaction_status')
+        $this->artisan('mpesa:b2c_transaction_status')
             ->expectsOutput('Nothing to query... all transactions seem to be ok.')
             ->assertExitCode(0);
     }
@@ -22,7 +22,7 @@ class TransactionStatusCommandTest extends MockServerTestCase
     function the_command_logs_queries()
     {
         $this->addMock($this->mockResponses['auth']['success']);
-        $this->addMock($this->mockResponses['b2c']['request']);
+        $this->addMock($this->mockResponses['b2c']['response']);
 
 
         MpesaBulkPaymentResponse::create([
@@ -34,7 +34,7 @@ class TransactionStatusCommandTest extends MockServerTestCase
             'originator_conversation_id' => 'test_origin_conv_id',
         ]);
 
-        $this->artisan('mpesa:transaction_status')
+        $this->artisan('mpesa:b2c_transaction_status')
             ->expectsOutput('Logging status queries')
             ->assertExitCode(0);
     }

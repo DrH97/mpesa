@@ -4,7 +4,7 @@ use DrH\Mpesa\Entities\MpesaB2bRequest;
 use DrH\Mpesa\Entities\MpesaBulkPaymentRequest;
 use DrH\Mpesa\Entities\MpesaStkRequest;
 use DrH\Mpesa\Facades\B2B;
-use DrH\Mpesa\Facades\Bulk;
+use DrH\Mpesa\Facades\B2C;
 use DrH\Mpesa\Facades\Identity;
 use DrH\Mpesa\Facades\STK;
 use DrH\Mpesa\Library\MpesaAccount;
@@ -16,19 +16,19 @@ use function DeepCopy\deep_copy;
 if (!function_exists('mpesa_balance')) {
     function mpesa_balance(): array
     {
-        return Bulk::balance();
+        return B2C::balance();
     }
 }
 if (!function_exists('mpesa_send')) {
     function mpesa_send(string $phone, int $amount, string $remarks): MpesaBulkPaymentRequest
     {
-        return Bulk::send($phone, $amount, $remarks);
+        return B2C::send($phone, $amount, $remarks);
     }
 }
-if (!function_exists('mpesa_bulk_status')) {
-    function mpesa_bulk_status(string $stkRequestId): array
+if (!function_exists('mpesa_b2c_status')) {
+    function mpesa_b2c_status(string $stkRequestId): array
     {
-        return Bulk::status($stkRequestId);
+        return B2C::status($stkRequestId);
     }
 }
 if (!function_exists('mpesa_id_check')) {
@@ -70,6 +70,13 @@ if (!function_exists('mpesa_b2b')) {
         string $phone
     ): MpesaB2bRequest {
         return B2B::pay($type, $shortcode, $amount, $reference, $phone);
+    }
+}
+
+if (!function_exists('mpesa_b2b_status')) {
+    function mpesa_b2b_status(MpesaB2bRequest $request): MpesaB2bRequest
+    {
+        return B2B::status($request);
     }
 }
 

@@ -9,3 +9,4 @@ yarn.lock
 
 coverage
 .phpunit.result.cache
+.phpunit.cache

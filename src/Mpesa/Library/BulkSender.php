@@ -62,12 +62,12 @@ class BulkSender extends ApiCore
         $amount = $this->getAmount($amount ?: $this->amount);
 
         $body = [
+            'CommandID' => 'BusinessPayment', //SalaryPayment,BusinessPayment,PromotionPayment
             'InitiatorName' => config('drh.mpesa.b2c.initiator'),
             'SecurityCredential' => config('drh.mpesa.b2c.security_credential'),
-            'CommandID' => 'BusinessPayment', //SalaryPayment,BusinessPayment,PromotionPayment
-            'Amount' => $amount,
             'PartyA' => config('drh.mpesa.b2c.short_code'),
             'PartyB' => $this->formatPhoneNumber($number ?: $this->number),
+            'Amount' => $amount,
             'Remarks' => $remarks ?: $this->remarks,
             'QueueTimeOutURL' => config('drh.mpesa.b2c.timeout_url') . 'b2c',
             'ResultURL' => config('drh.mpesa.b2c.result_url') . 'b2c',
@@ -89,13 +89,13 @@ class BulkSender extends ApiCore
     {
         $body = [
             'CommandID' => 'AccountBalance',
-            'Initiator' => config('drh.mpesa.bulk.initiator'),
-            'SecurityCredential' => config('drh.mpesa.bulk.security_credential'),
-            'PartyA' => config('drh.mpesa.bulk.short_code'),
+            'Initiator' => config('drh.mpesa.b2c.initiator'),
+            'SecurityCredential' => config('drh.mpesa.b2c.security_credential'),
+            'PartyA' => config('drh.mpesa.b2c.short_code'),
             'IdentifierType' => 4,
             'Remarks' => 'Checking Balance',
-            'QueueTimeOutURL' => config('drh.mpesa.bulk.timeout_url') . 'bulk_balance',
-            'ResultURL' => config('drh.mpesa.bulk.result_url') . 'bulk_balance',
+            'QueueTimeOutURL' => config('drh.mpesa.b2c.timeout_url') . 'b2c/balance',
+            'ResultURL' => config('drh.mpesa.b2c.result_url') . 'b2c/balance',
         ];
         $this->bulk = true;
         return $this->sendRequest($body, 'account_balance');
@@ -118,15 +118,15 @@ class BulkSender extends ApiCore
         $transactionId = MpesaBulkPaymentResponse::whereTransactionId($transactionId)->first()->transaction_id;
 
         $body = [
-            'Initiator' => config('drh.mpesa.bulk.initiator'),
-            'SecurityCredential' => config('drh.mpesa.bulk.security_credential'),
             'CommandID' => 'TransactionStatusQuery',
-            'TransactionID' => $transactionId,
-            'PartyA' => config('drh.mpesa.bulk.short_code'),
+            'Initiator' => config('drh.mpesa.b2c.initiator'),
+            'SecurityCredential' => config('drh.mpesa.b2c.security_credential'),
+            'PartyA' => config('drh.mpesa.b2c.short_code'),
             'IdentifierType' => 1,
-            'ResultURL' => config('drh.mpesa.bulk.result_url') . 'bulk_balance',
-            'QueueTimeOutURL' => config('drh.mpesa.bulk.timeout_url') . 'bulk_balance',
-            'Remarks' => 'Checking Status',
+            'TransactionID' => $transactionId,
+            'ResultURL' => config('drh.mpesa.b2c.result_url') . 'b2c/status',
+            'QueueTimeOutURL' => config('drh.mpesa.b2c.timeout_url') . 'b2c/status',
+            'Remarks' => 'ok',
         ];
         try {
             return $this->sendRequest($body, 'transaction_status');

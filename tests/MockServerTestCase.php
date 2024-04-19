@@ -2,6 +2,7 @@
 
 namespace DrH\Mpesa\Tests;
 
+use DrH\Mpesa\Exceptions\ClientException;
 use DrH\Mpesa\Library\ApiCore;
 use DrH\Mpesa\Library\Core;
 use DrH\Mpesa\Repositories\MpesaRepository;
@@ -9,6 +10,7 @@ use GuzzleHttp\Client;
 use GuzzleHttp\Handler\MockHandler;
 use GuzzleHttp\HandlerStack;
 use GuzzleHttp\Psr7\Response;
+use Illuminate\Support\Facades\Event;
 
 abstract class MockServerTestCase extends TestCase
 {
@@ -18,9 +20,14 @@ abstract class MockServerTestCase extends TestCase
 
     protected MockHandler $mock;
 
+    /**
+     * @throws ClientException
+     */
     protected function setUp(): void
     {
         parent::setUp();
+
+        Event::fake();
 
         $this->mock = new MockHandler();
 
@@ -34,7 +41,7 @@ abstract class MockServerTestCase extends TestCase
         $this->core = new ApiCore($this->client, new MpesaRepository());
     }
 
-    protected function addMock(array $expected, int $status = 200)
+    protected function addMock(array $expected, int $status = 200): void
     {
         $this->mock->append(
             new Response(
@@ -103,7 +110,7 @@ abstract class MockServerTestCase extends TestCase
             ]
         ],
         'b2c' => [
-            'request' => [
+            'response' => [
                 "conversation_id" => "AG_20191219_00005797af5d7d75f652",
                 "originatorConversation_id" => "16740-34861180-1",
                 "response_code" => "0",
@@ -270,6 +277,76 @@ abstract class MockServerTestCase extends TestCase
                         ]
                     ]
                 ]
+            ],
+            'status' => [
+                "Result" => [
+                    "ResultType" => 0,
+                    "ResultCode" => 0,
+                    "ResultDesc" => "The service request is processed successfully.",
+                    "OriginatorConversationID" => "fd43-4930-93e0",
+                    "ConversationID" => "AG_20191219_00004e48cf7e3533f581",
+                    "TransactionID" => "SDE0000000",
+                    "ResultParameters" => [
+                        "ResultParameter" => [
+                            [
+                                "Key" => "DebitPartyName",
+                                "Value" => "000000 – Biller Company"
+                            ],
+                            [
+                                "Key" => "CreditPartyName",
+                                "Value" => "000000 – Biller Company"
+                            ],
+                            [
+                                "Key" => "OriginatorConversationID",
+                                "Value" => "5118-111210482-1"
+                            ],
+                            [
+                                "Key" => "InitiatedTime",
+                                "Value" => 20240413194009
+                            ],
+                            [
+                                "Key" => "DebitAccountType",
+                                "Value" => "MMF Account for Organization"
+                            ],
+                            [
+                                "Key" => "DebitPartyCharges"
+                            ],
+                            [
+                                "Key" => "TransactionReason"
+                            ],
+                            [
+                                "Key" => "ReasonType",
+                                "Value" => "Business To Business Transfer via API"
+                            ],
+                            [
+                                "Key" => "TransactionStatus",
+                                "Value" => "Completed"
+                            ],
+                            [
+                                "Key" => "FinalisedTime",
+                                "Value" => 20240413194009
+                            ],
+                            [
+                                "Key" => "Amount",
+                                "Value" => 22000.0
+                            ],
+                            [
+                                "Key" => "ConversationID",
+                                "Value" => "AG_20230420_2010759fd5662ef6d054"
+                            ],
+                            [
+                                "Key" => "ReceiptNo",
+                                "Value" => "NLJ41HAY6Q"
+                            ]
+                        ]
+                    ],
+                    "ReferenceData" => [
+                        "ReferenceItem" => [
+                            "Key" => "Occasion"
+                        ]
+                    ]
+                ]
+
             ]
         ]
     ];

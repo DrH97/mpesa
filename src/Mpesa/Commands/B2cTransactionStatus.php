@@ -5,21 +5,21 @@ namespace DrH\Mpesa\Commands;
 use DrH\Mpesa\Repositories\MpesaRepository;
 use Illuminate\Console\Command;
 
-class TransactionStatus extends Command
+class B2cTransactionStatus extends Command
 {
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'mpesa:transaction_status';
+    protected $signature = 'mpesa:b2c_transaction_status';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Check status of all pending bulk transactions';
+    protected $description = 'Check status of all pending b2c transactions';
 
     /**
      * Create a new command instance.
@@ -35,11 +35,11 @@ class TransactionStatus extends Command
      * Execute the console command.
      *
      */
-    public function handle()
+    public function handle(): void
     {
         mpesaLogInfo($this->description);
 
-        $results = $this->repository->queryBulkStatus();
+        $results = $this->repository->queryB2cStatus();
 
         if (count($results)) {
             $this->info("Logging status queries");

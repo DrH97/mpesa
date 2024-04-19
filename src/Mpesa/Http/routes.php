@@ -16,6 +16,7 @@ Route::group([
 
     Route::any('timeout/b2b', [MpesaController::class, 'b2bTimeout']);
     Route::any('result/b2b', [MpesaController::class, 'b2bResult']);
+    Route::any('result/b2b/status', [MpesaController::class, 'statusCallback']);
 
     Route::any('stk-callback', [MpesaController::class, 'stkCallback']);
 

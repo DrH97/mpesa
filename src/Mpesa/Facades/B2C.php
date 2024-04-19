@@ -12,10 +12,10 @@ use Illuminate\Support\Facades\Facade;
  *
  * @see \DrH\Mpesa\Library\BulkSender
  */
-class Bulk extends Facade
+class B2C extends Facade
 {
     protected static function getFacadeAccessor(): string
     {
-        return 'mpesa_bulk';
+        return 'mpesa_b2c';
     }
 }

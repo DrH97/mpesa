@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Facade;
 
 /**
  * @method static MpesaB2bRequest pay(string $type, string $shortcode, int $amount, string $reference, string $phone)
+ * @method static MpesaB2bRequest status(MpesaB2bRequest $request)
  *
  * @see \DrH\Mpesa\Library\B2BPayment
  */
