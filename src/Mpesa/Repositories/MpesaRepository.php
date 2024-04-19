@@ -288,7 +288,7 @@ class MpesaRepository
         foreach ($b2b as $item) {
             try {
                 $status = mpesa_b2b_status($item);
-                $transactions[$item->conversation_id] = $status->ResponseDescription;
+                $transactions[$item->conversation_id] = $status->response_description;
             } catch (Exception $e) {
                 $transactions[$item->conversation_id] = $e->getMessage();
             }
