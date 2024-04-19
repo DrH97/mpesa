@@ -13,5 +13,4 @@ class MpesaB2bRequest extends Model
     {
         return $this->hasOne(MpesaB2bCallback::class, 'conversation_id', 'conversation_id');
     }
-
 }

@@ -80,10 +80,10 @@ class StkPush extends ApiCore
      * @throws GuzzleException
      */
     public function push(
-        int          $amount = null,
-        string       $number = null,
-        string       $reference = null,
-        string       $description = null,
+        int    $amount = null,
+        string $number = null,
+        string $reference = null,
+        string $description = null,
         MpesaAccount $account = null
     ): MpesaStkRequest
     {

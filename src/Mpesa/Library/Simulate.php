@@ -88,7 +88,7 @@ class Simulate extends ApiCore
      */
     public function push(
         string $number = null,
-        int    $amount = null,
+        int $amount = null,
         string $reference = null,
         string $command = null
     ): array
