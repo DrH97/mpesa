@@ -364,15 +364,15 @@ class MpesaRepository
             "ResultParameters" => [
                 "ResultParameter" => [
                     [
-                        "Key" => "DebitAccountBalance",
-                        "Value" => "{Amount={CurrencyCode=KES, MinimumAmount=0, BasicAmount=0.0}}"
+                        "Key" => "DebitAccountCurrentBalance",
+                        "Value" => "{Amount={CurrencyCode=KES,MinimumAmount=0,BasicAmount=0.0}}"
                     ],
                     [
                         "Key" => "Amount",
                         "Value" => $callback->amount
                     ],
                     [
-                        "Key" => "DebitPartyAffectedAccountBalance",
+                        "Key" => "DebitAccountBalance",
                         "Value" => "Working Account|KES|0.0|0.0|0.00|0.00"
                     ],
                     [
@@ -393,7 +393,7 @@ class MpesaRepository
                     ],
                     [
                         "Key" => "InitiatorAccountCurrentBalance",
-                        "Value" => "{Amount={CurrencyCode=KES, MinimumAmount=0, BasicAmount=0.0}}"
+                        "Value" => "{Amount={CurrencyCode=KES,MinimumAmount=0,BasicAmount=0.0}}"
                     ]
                 ]
             ],
