@@ -356,8 +356,8 @@ class MpesaRepository
     {
         $b2bData = [
             "ResultType" => 0,
-            "ResultCode" => 0,
-            "ResultDesc" => "The service request is processed successfully.",
+            "ResultCode" => $callback->transaction_status == 'Completed' ? 0 : 1,
+            "ResultDesc" => $callback->transaction_status,
             "OriginatorConversationID" => $callback->result_originator_conversation_id,
             "ConversationID" => $callback->result_conversation_id,
             "TransactionID" => $callback->receipt_no,
