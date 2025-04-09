@@ -6,6 +6,7 @@ use DrH\Mpesa\Exceptions\ExternalServiceException;
 use DrH\Mpesa\Library\C2bRegister;
 use Exception;
 use GuzzleHttp\Exception\GuzzleException;
+
 use function config;
 
 class C2bRepository

@@ -24,7 +24,7 @@ class MpesaAccount
         public string $secret,
         public string $passkey,
         public ?string $partyB = null,
-        public bool   $sandbox = false,
+        public bool $sandbox = false,
         public string $type = self::PAYBILL,
     ) {
     }

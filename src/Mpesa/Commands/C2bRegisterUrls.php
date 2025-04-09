@@ -6,6 +6,7 @@ use DrH\Mpesa\Exceptions\ExternalServiceException;
 use DrH\Mpesa\Library\C2bRegister;
 use GuzzleHttp\Exception\GuzzleException;
 use Illuminate\Console\Command;
+
 use function config;
 
 class C2bRegisterUrls extends Command

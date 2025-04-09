@@ -12,6 +12,7 @@ use Exception;
 use GuzzleHttp\Exception\GuzzleException;
 use GuzzleHttp\Exception\RequestException;
 use Illuminate\Support\Facades\Auth;
+
 use function base64_encode;
 use function config;
 use function count;
@@ -80,13 +81,12 @@ class StkPush extends ApiCore
      * @throws GuzzleException
      */
     public function push(
-        int    $amount = null,
+        int $amount = null,
         string $number = null,
         string $reference = null,
         string $description = null,
         MpesaAccount $account = null
-    ): MpesaStkRequest
-    {
+    ): MpesaStkRequest {
         $time = Carbon::now()->format('YmdHis');
 
         if (config('drh.mpesa.multi_tenancy', false) && ($account && !$account->sandbox)) {
