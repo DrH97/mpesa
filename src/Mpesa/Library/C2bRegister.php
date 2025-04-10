@@ -65,8 +65,7 @@ class C2bRegister extends ApiCore
         string $confirmationURL = null,
         string $validationURL = null,
         string $onTimeout = null
-    ): array
-    {
+    ): array {
         if ($onTimeout && $onTimeout !== 'Completed' && $onTimeout !== 'Cancelled') {
             throw new ClientException('Invalid timeout argument. Use Completed or Cancelled');
         }

@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateMpesaC2bCallbacksTable extends Migration
+return new class extends Migration
 {
     /**
      * Run the migrations.
@@ -44,4 +44,4 @@ class CreateMpesaC2bCallbacksTable extends Migration
     {
         Schema::dropIfExists('mpesa_c2b_callbacks');
     }
-}
+};

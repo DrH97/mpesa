@@ -5,6 +5,7 @@ namespace DrH\Mpesa\Library;
 use DrH\Mpesa\Exceptions\ExternalServiceException;
 use GuzzleHttp\Exception\ClientException;
 use GuzzleHttp\Exception\GuzzleException;
+
 use function config;
 use function json_decode;
 
@@ -91,8 +92,7 @@ class Simulate extends ApiCore
         int $amount = null,
         string $reference = null,
         string $command = null
-    ): array
-    {
+    ): array {
         if (!config('drh.mpesa.sandbox', true)) {
             throw new \DrH\Mpesa\Exceptions\ClientException('Cannot simulate a transaction in the live environment.');
         }

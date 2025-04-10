@@ -99,8 +99,10 @@ class B2BPayment extends ApiCore
      * @param MpesaB2bRequest $request
      * @return MpesaTransactionStatusRequest
      */
-    private function saveTransactionStatusRequest(object $response, MpesaB2bRequest $request): MpesaTransactionStatusRequest
-    {
+    private function saveTransactionStatusRequest(
+        object $response,
+        MpesaB2bRequest $request
+    ): MpesaTransactionStatusRequest {
         return MpesaTransactionStatusRequest::create([
             'conversation_id' => $response->ConversationID,
             'originator_conversation_id' => $response->OriginatorConversationID,

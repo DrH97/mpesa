@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateMpesaB2cResultParametersTable extends Migration
+return new class extends Migration
 {
     /**
      * Run the migrations.
@@ -37,4 +37,4 @@ class CreateMpesaB2cResultParametersTable extends Migration
     {
         Schema::dropIfExists('mpesa_b2c_result_parameters');
     }
-}
+};
