@@ -15,7 +15,7 @@ return new class extends Migration
     {
         Schema::create('mpesa_bulk_payment_requests', function (Blueprint $table) {
             $table->increments('id');
-            $table->string('conversation_id')->index();
+            $table->string('conversation_id')->unique();
             $table->string('originator_conversation_id');
             $table->decimal('amount', 10);
             $table->string('phone', 20);
