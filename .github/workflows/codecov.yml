@@ -13,7 +13,7 @@ jobs:
     strategy:
       matrix:
         os: [ ubuntu-latest ]
-        php: [ 8.3 ]
+        php: [ 8.4 ]
 
     name: P${{ matrix.php }} - ${{ matrix.os}}
 
@@ -31,7 +31,7 @@ jobs:
 
       - name: Cache Composer packages
         id: composer-cache
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: vendor
           key: ${{ runner.os }}-php-${{ hashFiles('**/composer.json') }}
@@ -44,7 +44,7 @@ jobs:
       # Code coverage
 
       - name: Generate coverage report
-        run: vendor/bin/phpunit --coverage-clover coverage.xml
+        run: vendor/bin/pest --coverage-clover coverage.xml
 
       - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v2
+        uses: codecov/codecov-action@v4
