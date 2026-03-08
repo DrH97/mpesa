@@ -23,7 +23,7 @@ return new class extends Migration
             $table->string('account_reference');
             $table->string('remarks')->nullable();
 
-            $table->string('conversation_id')->index();
+            $table->string('conversation_id')->unique();
             $table->string('originator_conversation_id');
             $table->string('response_code', 5);
             $table->string('response_description');

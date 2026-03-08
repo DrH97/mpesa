@@ -15,7 +15,7 @@ return new class extends Migration
     {
         Schema::create('mpesa_transaction_status_requests', function (Blueprint $table) {
             $table->increments('id');
-            $table->string('conversation_id')->index();
+            $table->string('conversation_id')->unique();
             $table->string('originator_conversation_id');
             $table->string('response_code', 5);
             $table->string('response_description');
